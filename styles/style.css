@@ -1,0 +1,47 @@
+body{
+    background: #302E2B;
+}
+
+#root{
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin: auto;
+}
+
+.squareRow{
+    display: flex;
+}
+
+.square{
+    width: 75px;
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.white{
+    background-color: #EBECD0;
+}
+
+.black{
+    background-color: #779556;
+}
+
+.piece{
+    width: 100%;
+    cursor: grab;
+}
+
+.highlight{
+    display: block;
+    width: 25px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin: auto;
+    margin-top: 25px;
+    background: rgba(0,0,0,0.15);
+}
+
+.highlightYellow{
+    background: #B9CA42;
+}
