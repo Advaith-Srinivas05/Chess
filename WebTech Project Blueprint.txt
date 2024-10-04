@@ -1,0 +1,19 @@
+WebTech Project Blueprint
+MAIN PAGE:
+	Home page --> select gamemode, profile, login
+
+SUB PAGES:
+	Profile page
+	Friends page
+	Leaderboard
+	About us
+	SELECT GAMEMODE:
+		Game page with timer
+		Puzzle page
+		Practice Board
+
+	
+	LOGIN:
+		Login page
+		Create Account
+
