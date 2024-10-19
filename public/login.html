@@ -3,34 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Chess.com</title>
-    <link rel="stylesheet" href="style_signup.css">
+    <title>Login - Chess.com</title>
+    <link rel="stylesheet" href="./src/css/login.css">
 </head>
 <body>
     <div class="logo">
         <img src="./src/img/icons/logo.png" alt="Chess.com logo">
     </div> 
-    <div class="signup-container">
+    <div class="login-container">
         <form action="login.html">
-            <input class="input-box" type="text" name="username" id="username" placeholder="Username">
-            <input class="input-box" type="text" name="email" id="email" placeholder="Email-ID">
+            <input class="input-box" type="text" name="email" id="mail" placeholder="Username or Email-ID">
             <input class="input-box" type="password" name="password" id="password" placeholder="Password">
+
+            <div class="forg-block">
+                <a class="link" href="#"><span class="forgot">Forgot Password?</span></a>
+            </div>            
+
             <div class="button-container">
-                <button class="button" type="submit">Sign Up</button> 
+                <button class="button" type="submit">Log In</button>
             </div>
+
             <div class="divider">
                 <span>or</span>
             </div>
+
             <div class="google-button-container">
                 <button class="google-button" type="button">
                     <img class="google-icon" src="./src/img/icons/google_icon.jpg" alt="Google icon">
-                    Sign Up with Google
+                    Log In with Google
                 </button>
             </div>
+
+            <div class="signup-redirect">
+                <span>Don't have an account?</span><a class="link" href="signup.html"> Sign Up</a>
+            </div>
         </form>
-        <div class="login-redirect">
-            <span>Already have an account?</span><a class="link" href="login.html">Log In</a>
-        </div>
     </div>
 </body>
 </html>
