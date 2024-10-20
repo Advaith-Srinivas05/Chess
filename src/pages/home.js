@@ -1,5 +1,5 @@
 import React from 'react';
-import PlayRandomMove from '../randomMove';
+import ComputerVsComputer from '../CompVsComp';
 import './../css/home.css';
 
 function About() {
@@ -21,7 +21,7 @@ function Home(){
   return (
     <div id="main">
         <div>
-          <PlayRandomMove/>
+          <ComputerVsComputer/>
         </div>
         <About/>
     </div>
