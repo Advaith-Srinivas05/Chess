@@ -25,3 +25,4 @@ function Play(){
 }
 
 export default Play
+export {Card}

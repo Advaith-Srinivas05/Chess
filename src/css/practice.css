@@ -1,45 +1,28 @@
-html, body{
-    height: 99%;
-}
-
-#practice-board-container{
+#card{
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: 170px;
-    gap: 50px;    
+    gap: 50px;
 }
 
-#Btn-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 10px;
-}
 
-.Btn{
+.card {
+    text-decoration: none;
+    background-color: #21201d;
     width: 300px;
-    height: 75px;
-    border-radius: 5pt;
-    font-size: 22px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s ease;
+}
+  
+.card:hover {
+    box-shadow: 0 12px 24px 0 rgba(0,0,0,0.6);
+}
+
+.container {
+    font-size: 18px;
+    min-height: 7em;
     color: white;
+    padding: 2px 16px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    border: 2px solid black;
-}
-
-#startBtn{
-    background-color: #81b64c;
-}
-
-#startBtn:hover{
-    background-color: #94c25a;
-}
-
-#clearBtn{
-    background-color: #3c3b39;
-}
-
-#clearBtn:hover{
-    background-color: #434240;
 }
