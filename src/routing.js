@@ -5,7 +5,7 @@ import Home from './pages/home.js';
 import Play from './pages/play_page.js';
 import Practice from './pages/practice.js';
 import PlayVsStockfish from './playComputer.js';
-import SaveVsStockfish from './playComputerSave.js';
+// import SaveVsStockfish from './playComputerSave.js';
 
 function App() {
   return (

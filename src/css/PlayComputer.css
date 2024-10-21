@@ -1,18 +1,92 @@
-/* PlayVsStockfish.css */
-.board-wrapper {
+.complete-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-left: 170px;
-  gap: 30px;
+  gap: 10px;
 }
 
-.button-container{
-  max-width: 550px;
+.board-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: 30px;
+}
+
+.right-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 550px;
+  gap: 30px;
+}
+
+/* Moves Display Styling */
+.MoveDisplay {
+  background-color: #3f3e3a;
+  width: 550px;
+  height: 550px;
+  box-sizing: border-box;
+  border: 2px solid black;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  position: relative;
+}
+
+.outer-table {
+  height: 74%;
+  overflow: auto; /* Allow scrolling */
+}
+
+.moves-table {
+  width: 80%;
+  border-collapse: collapse; /* Prevent gaps between table cells */
+  color: white;
+  text-align: left;
+  font-size: 18px; /* Adjusted font size */
+  margin-left: 10%; /* Keep this for alignment */
+  padding-bottom: 0; /* Removed margin-bottom */
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#move-heading {
+  text-align: center;
+  color: white;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  padding-top: 3%;
+  font-size: 30px;
+}
+
+.moves-table td {
+  padding: 5px 10px; /* Consistent padding for table cells */
+}
+
+.move-number {
+  width: 10%; /* Control width of move number column */
+}
+
+.white-move,
+.black-move {
+  width: 45%; /* Control width of move columns */
+}
+
+/* Align moves properly */
+.white-move {
+  text-align: left;
+}
+
+.black-move {
+  text-align: left;
+}
+
+.button-container {
+  max-width: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
@@ -25,62 +99,51 @@
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   border: 2px solid black;
   cursor: pointer;
-  box-shadow: 0 5px 5px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.5);
 }
 
-#button-easy🤓{
+#button-easy🤓 {
   background-color: #81b64c;
 }
 
-#button-easy🤓:hover{
+#button-easy🤓:hover {
   background-color: #94c25a;
 }
 
-#button-medium🧐{
+#button-medium🧐 {
   background-color: orange;
 }
 
-#button-medium🧐:hover{
+#button-medium🧐:hover {
   background-color: rgb(252, 179, 43);
 }
 
-#button-hard😵{
+#button-hard😵 {
   background-color: orangered;
 }
 
-#button-hard😵:hover{
+#button-hard😵:hover {
   background-color: rgb(252, 98, 41);
 }
 
-#button-new, #button-undo{
+#button-new,
+#button-undo {
   background-color: #3f3e3a;
 }
 
-#button-new:hover, #button-undo:hover{
+#button-new:hover,
+#button-undo:hover {
   background-color: #454444;
 }
 
-#button-easy🤓.button-active{
+#button-easy🤓.button-active {
   border: 10px solid green;
 }
 
-#button-medium🧐.button-active{
+#button-medium🧐.button-active {
   border: 10px solid rgb(232, 127, 6);
 }
 
-#button-hard😵.button-active{
+#button-hard😵.button-active {
   border: 10px solid brown;
-}
-
-.custom-board {
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-.custom-dark-square {
-  background-color: #779952;
-}
-
-.custom-light-square {
-  background-color: #edeed1;
 }
