@@ -1,10 +1,12 @@
+// This is still in testing not a completed feature
+
 import React, { useMemo, useRef, useState } from 'react';
 import { Chessboard } from 'react-chessboard';
 import Chess from 'chess.js';
 import Engine from './engine';
 import './css/PlayComputer.css';
 
-const PlayVsStockfish = () => {
+const SaveVsStockfish = () => {
   const levels = {
     "Easy 🤓": 2,
     "Medium 🧐": 8,
@@ -16,27 +18,26 @@ const PlayVsStockfish = () => {
   const [gamePosition, setGamePosition] = useState(game.fen());
   const [stockfishLevel, setStockfishLevel] = useState(2);
   const [currentTimeout, setCurrentTimeout] = useState(null);
-  const [isPlayerTurn, setIsPlayerTurn] = useState(true); // Track if it's player's turn
   const chessboardRef = useRef(null);
+  const [gameMoves, setGameMoves] = useState([]); // To store the game moves
 
   function findBestMove() {
     engine.evaluatePosition(game.fen(), stockfishLevel);
     engine.onMessage(({ bestMove }) => {
       if (bestMove) {
-        game.move({
+        const move = {
           from: bestMove.substring(0, 2),
           to: bestMove.substring(2, 4),
           promotion: bestMove.substring(4, 5) || "q"
-        });
+        };
+        game.move(move);
+        setGameMoves([...gameMoves, move]); // Add Stockfish's move to the list
         setGamePosition(game.fen());
-        setIsPlayerTurn(true); // After Stockfish's move, it's player's turn again
       }
     });
   }
 
   function onDrop(sourceSquare, targetSquare, piece) {
-    if (!isPlayerTurn) return false; // Block player move if it's not their turn
-
     const move = game.move({
       from: sourceSquare,
       to: targetSquare,
@@ -45,8 +46,8 @@ const PlayVsStockfish = () => {
 
     if (move === null) return false;
 
+    setGameMoves([...gameMoves, { from: sourceSquare, to: targetSquare, promotion: piece[1].toLowerCase() ?? "q" }]); // Store player's move
     setGamePosition(game.fen());
-    setIsPlayerTurn(false); // Now it's Stockfish's turn
 
     if (!game.game_over() && !game.in_draw()) {
       const newTimeout = setTimeout(findBestMove, 2000); // Find best move after 2 seconds
@@ -56,39 +57,17 @@ const PlayVsStockfish = () => {
     return true;
   }
 
-  function undoLastMove() {
-    if (isPlayerTurn) {
-      // If it's player's turn, undo both Stockfish's move and the player's move
-      game.undo(); // Undo Stockfish's move
-      game.undo(); // Undo player's move
-    } else {
-      // If it's Stockfish's turn, only undo the player's move
-      game.undo(); // Undo player's move
-    }
+  function saveGame() {
+    const gameData = {
+      moves: gameMoves,
+      stockfishLevel,
+      result: game.game_over() ? (game.in_draw() ? '1/2-1/2' : game.turn() === 'w' ? '1-0' : '0-1') : 'In Progress',
+      date: new Date().toISOString()
+    };
 
-    setGamePosition(game.fen());
-    setIsPlayerTurn(true); // After undoing, it's player's turn again
-    chessboardRef.current?.clearPremoves(); // Clear premoves
-    clearTimeout(currentTimeout); // Clear any timeouts
+    console.log("Game Data:", gameData);
+    // You can save gameData to a database or local storage here
   }
-
-  const customPieces = useMemo(() => {
-    const pieces = ["wP", "wN", "wB", "wR", "wQ", "wK", "bP", "bN", "bB", "bR", "bQ", "bK"];
-    const pieceComponents = {};
-    pieces.forEach(piece => {
-      pieceComponents[piece] = ({ squareWidth }) => (
-        <div
-          style={{
-            width: squareWidth,
-            height: squareWidth,
-            backgroundImage: `url(/img/chesspieces/${piece}.png)`,
-            backgroundSize: "100%"
-          }}
-        />
-      );
-    });
-    return pieceComponents;
-  }, []);
 
   return (
     <div className="board-wrapper">
@@ -109,7 +88,23 @@ const PlayVsStockfish = () => {
         customLightSquareStyle={{
           backgroundColor: "#edeed1"
         }}
-        customPieces={customPieces}
+        customPieces={useMemo(() => {
+          const pieces = ["wP", "wN", "wB", "wR", "wQ", "wK", "bP", "bN", "bB", "bR", "bQ", "bK"];
+          const pieceComponents = {};
+          pieces.forEach(piece => {
+            pieceComponents[piece] = ({ squareWidth }) => (
+              <div
+                style={{
+                  width: squareWidth,
+                  height: squareWidth,
+                  backgroundImage: `url(/img/chesspieces/${piece}.png)`,
+                  backgroundSize: "100%"
+                }}
+              />
+            );
+          });
+          return pieceComponents;
+        }, [])}
         ref={chessboardRef} // Chessboard ref for clearing premoves
       />
 
@@ -130,8 +125,8 @@ const PlayVsStockfish = () => {
           className="button"
           onClick={() => {
             game.reset();
+            setGameMoves([]); // Reset game moves
             setGamePosition(game.fen());
-            setIsPlayerTurn(true); // Reset to player's turn
             chessboardRef.current?.clearPremoves(); // Clear premoves
             clearTimeout(currentTimeout); // Clear any timeouts
           }}
@@ -142,13 +137,28 @@ const PlayVsStockfish = () => {
         <button
           id='button-undo'
           className="button"
-          onClick={undoLastMove} // Call the updated undo function
+          onClick={() => {
+            game.undo();
+            game.undo(); // Undo twice to undo computer's move
+            setGameMoves(gameMoves.slice(0, -2)); // Remove last two moves
+            setGamePosition(game.fen());
+            chessboardRef.current?.clearPremoves(); // Clear premoves
+            clearTimeout(currentTimeout); // Clear any timeouts
+          }}
         >
           Undo
+        </button>
+
+        <button
+          id='button-save'
+          className="button"
+          onClick={saveGame} // Save the game data
+        >
+          Save Game
         </button>
       </div>
     </div>
   );
 };
 
-export default PlayVsStockfish;
+export default SaveVsStockfish;

@@ -20,6 +20,7 @@
 }
 
 .container {
+    min-height: 7em;
     font-size: 18px;
     color: white;
     padding: 2px 16px;

@@ -81,6 +81,7 @@ export default function ComputerVsComputer() {
       customDarkSquareStyle={{ backgroundColor: "#779952" }}
       customLightSquareStyle={{ backgroundColor: "#edeed1" }}
       customPieces={customPieces}
+      isDraggablePiece={() => false}
     />
   );
 }
