@@ -1,0 +1,45 @@
+html, body{
+    height: 99%;
+}
+
+#practice-board-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 170px;
+    gap: 50px;    
+}
+
+#Btn-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.Btn{
+    width: 300px;
+    height: 75px;
+    border-radius: 5pt;
+    font-size: 22px;
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border: 2px solid black;
+}
+
+#startBtn{
+    background-color: #81b64c;
+}
+
+#startBtn:hover{
+    background-color: #94c25a;
+}
+
+#clearBtn{
+    background-color: #3c3b39;
+}
+
+#clearBtn:hover{
+    background-color: #434240;
+}
