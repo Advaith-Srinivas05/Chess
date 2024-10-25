@@ -5,6 +5,7 @@ import Home from './pages/home.js';
 import Play from './pages/play_page.js';
 import Practice from './pages/practice.js';
 import PlayVsStockfish from './bots/playComputer.js';
+import Analysis from './analysis.js';
 // import SaveVsStockfish from './bots/playComputerSave.js';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/play" element={<Play/>}/>
         <Route path="/bots" element={<PlayVsStockfish/>}/>
         <Route path="/practice" element={<Practice/>} />
+        <Route path="/analysis" element={<Analysis/>}/>   
         {/* <Route path="/leaderboard" element={<Leaderboard />} /> */}
         {/* <Route path="/learn" element={<Learn/>} /> */}
         {/* <Route path="/social" element={<Social />} /> */}
