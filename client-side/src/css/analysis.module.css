@@ -1,9 +1,15 @@
-.board-wrapper {
+.whole-wrapper {
     margin-left: 170px;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    padding: 20px;
+    justify-content: center;
+    gap: 40px;
+}
+
+.board-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
   
 .input-fen {

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Chessboard } from "react-chessboard";
 import Chess from "chess.js"; // Import chess.js for managing chess logic
 import Engine from "./bots/engine2.js"; // Import your engine file
-import './css/analysis.css'; // Import the CSS file
+import styles from './css/analysis.module.css'; // Import the CSS file
 
 const Analysis = () => {
   const engine = useMemo(() => new Engine(), []);
@@ -20,6 +20,12 @@ const Analysis = () => {
     engine.evaluatePosition(chessBoardPosition, depth);
 
     engine.onMessage(({ bestMove, evaluation, mateIn }) => {
+      // Invert the evaluation if it's Black's turn
+      let adjustedEvaluation = evaluation;
+      if (game.turn() === 'b') {
+        adjustedEvaluation = -evaluation;
+      }
+
       // If mate is possible, set mate info
       if (mateIn) {
         setPossibleMate(mateIn);
@@ -36,7 +42,7 @@ const Analysis = () => {
 
       // Update position evaluation score
       if (evaluation !== null) {
-        setPositionEvaluation(evaluation); // Update evaluation
+        setPositionEvaluation(adjustedEvaluation); // Update evaluation with the adjustment
       }
     });
   }
@@ -111,66 +117,67 @@ const Analysis = () => {
   }, [positionEvaluation]);
 
   return (
-    <div className="board-wrapper">
-	<div className="evaluation-bar-container">
-        <div className="evaluation-bar">
-          <div className="black-bar" style={{ height: `${100 - evalPercentage}%` }}></div>
-          <div className="white-bar" style={{ height: `${evalPercentage}%` }}></div>
+    <div className={styles["whole-wrapper"]}>
+      <div className={styles["board-wrapper"]}>
+        <div className={styles["evaluation-bar-container"]}>
+          <div className={styles["evaluation-bar"]}>
+            <div className={styles["black-bar"]} style={{ height: `${100 - evalPercentage}%` }}></div>
+            <div className={styles["white-bar"]} style={{ height: `${evalPercentage}%` }}></div>
+          </div>
+        </div>
+        <div className={styles["board-container"]}>
+          <Chessboard
+            id="AnalysisBoard"
+            position={chessBoardPosition}
+            onPieceDrop={(sourceSquare, targetSquare) =>
+              onDrop(sourceSquare, targetSquare, "q")
+            }
+            boardWidth={550} // Set board width to 550px
+            customBoardStyle={{
+              borderRadius: "4px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)", // Custom board style
+            }}
+            customPieces={customPieces}
+            customDarkSquareStyle={{ backgroundColor: "#779952" }} // Dark square color
+            customLightSquareStyle={{ backgroundColor: "#edeed1" }} // Light square color
+          />
+          {arrows.map((arrow, index) => {
+            const [fromX, fromY] = squareToCoordinates(arrow.from);
+            const [toX, toY] = squareToCoordinates(arrow.to);
+            return (
+              <svg
+                key={index}
+                className={styles["arrow-svg"]}
+              >
+                <line
+                  x1={fromX} // Adjusted for center of the square
+                  y1={fromY}
+                  x2={toX}
+                  y2={toY}
+                  stroke="green"
+                  strokeWidth="4" // Reduced stroke width
+                  markerEnd="url(#arrowhead)"
+                />
+                <defs>
+                  <marker
+                    id="arrowhead"
+                    markerWidth="4"  // Reduced width
+                    markerHeight="2.8" // Reduced height
+                    refX="0"
+                    refY="1.4"  // Adjusted for smaller arrowhead
+                    orient="auto"
+                  >
+                    <polygon points="0 0, 4 1.4, 0 2.8" fill="green" /> // Adjusted points for smaller size
+                  </marker>
+                </defs>
+              </svg>
+            );
+          })}
         </div>
       </div>
-      <div className="board-container">
-        <Chessboard
-          id="AnalysisBoard"
-          position={chessBoardPosition}
-          onPieceDrop={(sourceSquare, targetSquare) =>
-            onDrop(sourceSquare, targetSquare, "q")
-          }
-          boardWidth={550} // Set board width to 550px
-          customBoardStyle={{
-            borderRadius: "4px",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)", // Custom board style
-          }}
-          customPieces={customPieces}
-          customDarkSquareStyle={{ backgroundColor: "#779952" }} // Dark square color
-          customLightSquareStyle={{ backgroundColor: "#edeed1" }} // Light square color
-        />
-        {arrows.map((arrow, index) => {
-          const [fromX, fromY] = squareToCoordinates(arrow.from);
-          const [toX, toY] = squareToCoordinates(arrow.to);
-          return (
-            <svg
-              key={index}
-              className="arrow-svg"
-            >
-              <line
-                x1={fromX} // Adjusted for center of the square
-                y1={fromY}
-                x2={toX}
-                y2={toY}
-                stroke="green"
-                strokeWidth="4" // Reduced stroke width
-                markerEnd="url(#arrowhead)"
-              />
-              <defs>
-                <marker
-                  id="arrowhead"
-                  markerWidth="4"  // Reduced width
-                  markerHeight="2.8" // Reduced height
-                  refX="0"
-                  refY="1.4"  // Adjusted for smaller arrowhead
-                  orient="auto"
-                >
-                  <polygon points="0 0, 4 1.4, 0 2.8" fill="green" /> // Adjusted points for smaller size
-                </marker>
-              </defs>
-            </svg>
-          );
-        })}
-      </div>
-
       {/* Vertical Evaluation Bar */}
-      <div className="menu">
-        <div className="text">
+      <div className={styles["menu"]}>
+        <div className={styles["text"]}>
           <h3 style={{ textAlign: "center" }}>Analysis Menu:</h3>
           <h4 style={{ lineHeight: "40px" }}>
             Position Evaluation:{" "}
@@ -181,13 +188,13 @@ const Analysis = () => {
         </div>
         <input
           ref={inputRef}
-          className="input-fen"
+          className={styles["input-fen"]}
           onChange={handleFenInputChange}
           placeholder="Paste FEN to start analysing custom position"
         />
-        <div className="button-container">
+        <div className={styles["button-container"]}>
           <button
-            className="button"
+            className={styles["button"]}
             onClick={() => {
               setPossibleMate("");
               setBestLine("");
@@ -198,7 +205,7 @@ const Analysis = () => {
             reset
           </button>
           <button
-            className="button"
+            className={styles["button"]}
             onClick={() => {
               setPossibleMate("");
               setBestLine("");
