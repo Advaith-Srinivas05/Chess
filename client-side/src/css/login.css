@@ -1,125 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
-    font-family: Poppins, sans-serif;
-    color: white;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; /* Updated to Poppins for consistency */
+    color: white; /* General color adjustment */
 }
 
 body {
-    background-color: #2E2E2E;
+    background-color: #2E2E2E; /* Dark background color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     height: 100vh;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 100px;
+.container {
+    background-color: #272525; /* Darker container background */
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
 }
 
-.login-container {
-    background-color: #272525;
-    border-radius: 10px;
-    max-width: 350px;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.input-box {
-    width: 100%;
-    padding: 7px 8px;
-    font-size: 16px;
-    margin: 8px 0;
-    border: 1px solid #666666;
-    background-color: #3a3a3a;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.input-box:focus {
-    outline: #ffffff;
-}
-
-.input-box::placeholder {
-    font-size: 16px;
-}
-
-.button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px;
-}
-
-.button {
-    padding: 7px 15px;
-    background-color: #81b64c;
-    border-radius: 5px;
-    border: none;
-    box-shadow: 0px 3px 0px #4e6932;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.button:hover {
-    background-color: #6da43c;
-}
-
-.forg-block {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    width: 100%;
-}
-
-.link {
-    color: #81b64c;
-    text-decoration: none;
-}
-
-.link:hover {
-    text-decoration: underline;
-}
-
-.forgot {
+.container p {
     font-size: 14px;
-    color: #81b64c;
+    line-height: 20px;
+    letter-spacing: 0.3px;
+    margin: 20px 0;
 }
 
-.signup-redirect {
+.container span {
+    font-size: 12px;
+}
+
+.container a {
+    color: #81b64c; /* Updated to the green link color */
+    font-size: 13px;
+    text-decoration: none;
+    margin: 15px 0 10px;
+}
+
+.container a:hover {
+    text-decoration: underline;
+}
+.container button {
+    background-color: #81b64c; /* Updated button background to green */
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.container button.hidden {
+    background-color: transparent;
+    border-color: #fff;
+}
+
+.container form {
+    background-color: #272525; /* Consistent dark background for form */
     display: flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
 }
 
-.signup-redirect span {
-    font-size: 16px;
+.container input {
+    background-color: #3a3a3a; /* Dark input fields */
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
     color: white;
 }
 
-.signup-redirect .link {
-    font-size: 16px;
-    color: #81b64c;
-    margin-left: 5px;
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
 }
 
-.signup-redirect .link:hover {
-    text-decoration: underline;
+.sign-in {
+    left: 0;
+    width: 50%;
+    z-index: 2;
 }
 
-.google-button-container {
+.container.active .sign-in {
+    transform: translateX(100%);
+}
+
+.sign-up {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: move 0.6s;
+}
+
+@keyframes move {
+    0%, 49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+.social-icons {
+    margin: 20px 0;
     display: flex;
     justify-content: center;
 }
 
-.google-button {
+.social-icons button {
     display: flex;
     align-items: center;
     padding: 7px 15px;
@@ -127,28 +146,82 @@ body {
     border-radius: 5px;
     border: none;
     color: white;
-    font-size: 16px;
+    font-size: 10px;
     cursor: pointer;
 }
 
-.google-icon {
+.social-icons button:hover {
+    background-color: #357ae8;
+}
+
+.social-icons .google-icon {
     width: 16px;
     margin-right: 10px;
 }
 
-.google-button:hover {
-    background-color: #357ae8;
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    border-radius: 150px 0 0 100px;
+    z-index: 1000;
 }
 
-.divider {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 15px 0;
-    color: #666;
+.container.active .toggle-container {
+    transform: translateX(-100%);
+    border-radius: 0 150px 100px 0;
 }
 
-.divider span {
+.toggle {
     background-color: #272525;
-    padding: 0 10px;
+    height: 100%;
+    background: linear-gradient(to right, #67AC5D, #74B36B);
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
 }
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 30px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left {
+    transform: translateX(0);
+}
+
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.container.active .toggle-right {
+    transform: translateX(200%);
+}
+
