@@ -1,43 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Chess.com</title>
-    <link rel="stylesheet" href="./../src/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/client-side/src/css/login.css">
+    <title>Chess</title>
 </head>
+
 <body>
-    <div class="logo">
-        <img src="./../src/img/icons/logo.png" alt="Chess.com logo">
-    </div> 
-    <div class="login-container">
-        <form action="index.html" method="post">
-            <input class="input-box" type="text" name="email" id="mail" placeholder="Username or Email-ID">
-            <input class="input-box" type="password" name="password" id="password" placeholder="Password">
 
-            <div class="forg-block">
-                <a class="link" href="#"><span class="forgot">Forgot Password?</span></a>
-            </div>            
-
-            <div class="button-container">
-                <button class="button" type="submit" href="./index.html">Log In</button>
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form>
+                <h1>Create Account</h1>
+                <div class="social-icons">
+                    <button class="google-button" type="button">
+                        <img class="google-icon" src="/client-side/src/img/icons/google_icon.jpg" alt="Google Icon">
+                        Sign up with Google
+                    </button>
+                </div>                
+                <span>OR</span>
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Email">
+                <input type="password" placeholder="Password">
+                <button>Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form>
+                <h1>Sign In</h1>
+                <div class="social-icons">
+                    <button class="google-button" type="button">
+                        <img class="google-icon" src="/client-side/src/img/icons/google_icon.jpg" alt="Google icon">
+                        Log In with Google
+                    </button>
+                </div>                
+                <span>OR</span>
+                <input type="email" placeholder="Email">
+                <input type="password" placeholder="Password">
+                <a href="#" class="forgot-pass">Forget Your Password?</a>
+                <button>Sign In</button>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Welcome Back!</h1>
+                    <p>Enter your personal details to use all of our sites features</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Register with your personal details to use all of our sites features</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
             </div>
-
-            <div class="divider">
-                <span>or</span>
-            </div>
-
-            <div class="google-button-container">
-                <button class="google-button" type="button">
-                    <img class="google-icon" src="./../src/img/icons/google_icon.jpg" alt="Google icon">
-                    Log In with Google
-                </button>
-            </div>
-
-            <div class="signup-redirect">
-                <span>Don't have an account?</span><a class="link" href="signup.html"> Sign Up</a>
-            </div>
-        </form>
+        </div>
     </div>
+
+    <script src="/client-side/src/login.js"></script>
 </body>
+
 </html>
