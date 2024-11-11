@@ -13,25 +13,30 @@ const Analysis = () => {
   const [depth, setDepth] = useState(10);
   const [bestLine, setBestLine] = useState("");
   const [possibleMate, setPossibleMate] = useState("");
-  const [arrows, setArrows] = useState([]); // State for storing arrows
+  const [arrows, setArrows] = useState([]);
+
+  // New function to apply FEN input to the board
+  const applyFenToBoard = () => {
+    const fen = inputRef.current.value;
+    const { valid } = game.validate_fen(fen);
+    if (valid) {
+      game.load(fen);
+      setChessBoardPosition(game.fen());
+    } else {
+      alert("Invalid FEN format. Please enter a valid FEN string.");
+    }
+  };
 
   function findBestMove() {
-    // Evaluate the current position with the desired depth
     engine.evaluatePosition(chessBoardPosition, depth);
-
     engine.onMessage(({ bestMove, evaluation, mateIn }) => {
-      // Invert the evaluation if it's Black's turn
       let adjustedEvaluation = evaluation;
       if (game.turn() === 'b') {
         adjustedEvaluation = -evaluation;
       }
-
-      // If mate is possible, set mate info
       if (mateIn) {
         setPossibleMate(mateIn);
       }
-
-      // Update the best move line and arrows
       if (bestMove) {
         setBestLine(bestMove);
         setArrows([{
@@ -39,10 +44,8 @@ const Analysis = () => {
           to: bestMove.substring(2, 4),
         }]);
       }
-
-      // Update position evaluation score
       if (evaluation !== null) {
-        setPositionEvaluation(adjustedEvaluation); // Update evaluation with the adjustment
+        setPositionEvaluation(adjustedEvaluation);
       }
     });
   }
@@ -54,11 +57,11 @@ const Analysis = () => {
       promotion: piece[1]?.toLowerCase() || "q",
     });
 
-    if (move === null) return false; // illegal move
+    if (move === null) return false;
 
     setPossibleMate("");
     setChessBoardPosition(game.fen());
-    engine.stop(); // Stop the engine before continuing
+    engine.stop();
     setBestLine("");
     setArrows([]);
 
@@ -90,30 +93,19 @@ const Analysis = () => {
     return pieceComponents;
   }, []);
 
-  const handleFenInputChange = (e) => {
-    const { valid } = game.validate_fen(e.target.value);
-    if (valid && inputRef.current) {
-      inputRef.current.value = e.target.value;
-      game.load(e.target.value);
-      setChessBoardPosition(game.fen());
-    }
-  };
-
-  // Correct the arrow positioning
   const squareToCoordinates = (square) => {
     const files = "abcdefgh";
     const ranks = "12345678";
-    const size = 550 / 8; // Each square is now 550px / 8 squares
-    const x = files.indexOf(square[0]) * size + size / 2; // Adjust for center
-    const y = (7 - ranks.indexOf(square[1])) * size + size / 2; // Adjust for center
+    const size = 550 / 8;
+    const x = files.indexOf(square[0]) * size + size / 2;
+    const y = (7 - ranks.indexOf(square[1])) * size + size / 2;
     return [x, y];
   };
 
-  // Calculate the percentage for the evaluation bar (between -1 and 1)
   const evalPercentage = useMemo(() => {
-    const evalRange = 8; // Let's assume +/-8 is the max evaluation
+    const evalRange = 8;
     const boundedEval = Math.max(Math.min(positionEvaluation, evalRange), -evalRange);
-    return ((boundedEval + evalRange) / (2 * evalRange)) * 100; // Maps eval to percentage (0% to 100%)
+    return ((boundedEval + evalRange) / (2 * evalRange)) * 100;
   }, [positionEvaluation]);
 
   return (
@@ -132,14 +124,14 @@ const Analysis = () => {
             onPieceDrop={(sourceSquare, targetSquare) =>
               onDrop(sourceSquare, targetSquare, "q")
             }
-            boardWidth={550} // Set board width to 550px
+            boardWidth={550}
             customBoardStyle={{
               borderRadius: "4px",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)", // Custom board style
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
             }}
             customPieces={customPieces}
-            customDarkSquareStyle={{ backgroundColor: "#779952" }} // Dark square color
-            customLightSquareStyle={{ backgroundColor: "#edeed1" }} // Light square color
+            customDarkSquareStyle={{ backgroundColor: "#779952" }}
+            customLightSquareStyle={{ backgroundColor: "#edeed1" }}
           />
           {arrows.map((arrow, index) => {
             const [fromX, fromY] = squareToCoordinates(arrow.from);
@@ -150,24 +142,24 @@ const Analysis = () => {
                 className={styles["arrow-svg"]}
               >
                 <line
-                  x1={fromX} // Adjusted for center of the square
+                  x1={fromX}
                   y1={fromY}
                   x2={toX}
                   y2={toY}
                   stroke="green"
-                  strokeWidth="4" // Reduced stroke width
+                  strokeWidth="4"
                   markerEnd="url(#arrowhead)"
                 />
                 <defs>
                   <marker
                     id="arrowhead"
-                    markerWidth="4"  // Reduced width
-                    markerHeight="2.8" // Reduced height
+                    markerWidth="4"
+                    markerHeight="2.8"
                     refX="0"
-                    refY="1.4"  // Adjusted for smaller arrowhead
+                    refY="1.4"
                     orient="auto"
                   >
-                    <polygon points="0 0, 4 1.4, 0 2.8" fill="green" /> // Adjusted points for smaller size
+                    <polygon points="0 0, 4 1.4, 0 2.8" fill="green" />
                   </marker>
                 </defs>
               </svg>
@@ -175,7 +167,6 @@ const Analysis = () => {
           })}
         </div>
       </div>
-      {/* Vertical Evaluation Bar */}
       <div className={styles["menu"]}>
         <div className={styles["text"]}>
           <h3 style={{ textAlign: "center" }}>Analysis Menu:</h3>
@@ -189,10 +180,10 @@ const Analysis = () => {
         <input
           ref={inputRef}
           className={styles["input-fen"]}
-          onChange={handleFenInputChange}
           placeholder="Paste FEN to start analysing custom position"
         />
         <div className={styles["button-container"]}>
+          <button className={styles["button"]} onClick={applyFenToBoard}>Go</button>
           <button
             className={styles["button"]}
             onClick={() => {
@@ -202,7 +193,7 @@ const Analysis = () => {
               setChessBoardPosition(game.fen());
             }}
           >
-            reset
+            Reset
           </button>
           <button
             className={styles["button"]}
@@ -213,7 +204,7 @@ const Analysis = () => {
               setChessBoardPosition(game.fen());
             }}
           >
-            undo
+            Undo
           </button>
         </div>
       </div>
