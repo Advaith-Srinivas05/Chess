@@ -1,15 +1,21 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
-const EmployeeModel = require("./Employee.js")
+const UserModel = require("./user.js")
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'bai_muchi'; 
 
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 
-mongoose.connect("mongodb://localhost:27017/demo");
+
+mongoose.connect("mongodb://localhost:27017/chess")
+    .then(() => console.log("Connected to MongoDB"))
+    .catch(err => console.error("MongoDB connection error:", err));
 
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
@@ -27,12 +33,12 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-app.post("/login", (req, res) => {
-    const {email, password} = req.body;
-    EmployeeModel.findOne({email: email})
-    .then(user => {
+app.post("/auth/login", async (req, res) => {
+    try {
+        const {email, password} = req.body;
+        const user = await UserModel.findOne({email: email});
+        
         if(user && user.password === password) {
-            // Create token
             const token = jwt.sign(
                 { userId: user._id, email: user.email },
                 SECRET_KEY,
@@ -45,27 +51,46 @@ app.post("/login", (req, res) => {
                 user: {
                     id: user._id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    rating: user.rating
                 }
             });
         } else {
-            res.status(401).json("Invalid credentials");
+            res.status(401).json({ message: "Invalid credentials" });
         }
-    });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
 });
 
-
-
-app.post("/register", (req, res) => {
-    EmployeeModel.create(req.body)
-    .then(employees => res.json(employees))
-    .catch(err => res.json(err))
-})
+app.post("/auth/register", async (req, res) => {
+    try {
+        const user = await UserModel.create({...req.body, rating: 1200,});
+        const token = jwt.sign(
+            { userId: user._id, email: user.email },
+            SECRET_KEY,
+            { expiresIn: '24h' }
+        );
+        
+        res.status(201).json({
+            status: "Success",
+            token: token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                rating: user.rating
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Registration failed", error: error.message });
+    }
+});
 
 app.get("/verify-token", verifyToken, (req, res) => {
     res.json({ valid: true });
 });
 
 app.listen(3001, () => {
-    console.log("server is running on port 3000")
+    console.log("server is running on port 3001")
 })

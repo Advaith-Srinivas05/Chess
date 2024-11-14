@@ -41,13 +41,14 @@ const AuthPage = () => {
   const handleSignIn = (e) => {
     e.preventDefault();
     setLoginError('');
-    axios.post("http://localhost:3001/login", { email, password })
+    axios.post("http://localhost:3001/auth/login", { email, password })
         .then(result => {
             if (result.data.status === "Success") {
                 localStorage.setItem('token', result.data.token);
                 localStorage.setItem('userData', JSON.stringify({
                     name: result.data.user.name,
-                    email: result.data.user.email
+                    email: result.data.user.email,
+                    rating: result.data.user.rating
                 }));
                 axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}`;
                 navigate("/home");
@@ -61,20 +62,28 @@ const AuthPage = () => {
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    console.log("Attempting to sign up with:", { name, email, password });
-    axios.post("http://localhost:3001/register", { name, email, password })
+    axios.post("http://localhost:3001/auth/register", { name, email, password })
       .then(result => {
-        console.log("Server response:", result);
+        console.log("Registration response:", result.data); // Add this log
         if (result.data) {
+          const userData = {
+              name: result.data.user.name,
+              email: result.data.user.email,
+              rating: result.data.user.rating
+          };
+          console.log("Storing userData:", userData); // Add this log
+          localStorage.setItem('token', result.data.token);
+          localStorage.setItem('userData', JSON.stringify(userData));
+          axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}`;
           navigate("/home");
         }
       })
       .catch(err => {
-        console.error("Registration error:", err);
+        console.error("Registration error:", err.response?.data);
         alert("Error during registration. Please check console.");
       });
   };
-
+  
   return (
     <div className={styles.container} id="container">
         <div className={`${styles['form-container']} ${styles['sign-up']}`}>
