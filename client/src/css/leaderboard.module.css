@@ -1,0 +1,129 @@
+/* Base reset for leaderboard section only */
+.leaderboard-section * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.leaderboard-section body {
+    width: 100%;
+    display: flex;
+    margin-left: 170px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 40px;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Root variables specific to leaderboard */
+.leaderboard-section :root {
+    --team-height: 60px;
+    --team-spacing: 10px;
+}
+
+/* Container styles specific to leaderboard */
+.leaderboard-section .leaderboard-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Header styles specific to leaderboard */
+.leaderboard-section .leaderboard-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.leaderboard-section .leaderboard-header h2 {
+    color: white;
+    font-weight: 600;
+}
+
+/* Table styles specific to leaderboard */
+.leaderboard-section .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-section .leaderboard-table thead {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.leaderboard-section .leaderboard-table th, .leaderboard-table td {
+    padding: 15px;
+    text-align: center;
+}
+
+.leaderboard-section .leaderboard-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--team-spacing);
+}
+
+.leaderboard-section .leaderboard-table tr {
+    height: var(--team-height);
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0 3px 5px #0000001f;
+    background: var(--color, #4CAF50);
+    margin-bottom: var(--team-spacing);
+    overflow: hidden;
+    margin: 10px;
+    gap: 20px;
+}
+
+.leaderboard-section .leaderboard-table tr { 
+    --color:  rgb(0, 247, 255);
+    height: 50px;
+}
+.leaderboard-section .leaderboard-table tr:nth-child(1) { --color: #FFD700; }
+.leaderboard-section .leaderboard-table tr:nth-child(2) { --color: #C0C0C0; }
+.leaderboard-section .leaderboard-table tr:nth-child(3) { --color: #CD7F32; }
+
+.leaderboard-section .leaderboard-table td {
+    color: #333;
+    font-weight: 600;
+}
+
+.leaderboard-section .leaderboard-table td:first-child {
+    width: 60px;
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+.leaderboard-section .leaderboard-table td:nth-child(2) {
+    flex: 1;
+    font-size: 1.1rem;
+    text-transform: capitalize;
+}
+
+.leaderboard-section .leaderboard-table td:nth-child(3),
+.leaderboard-section .leaderboard-table td:nth-child(4),
+.leaderboard-section .leaderboard-table td:nth-child(5) {
+    width: 80px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Message styles specific to leaderboard */
+.leaderboard-section .error-message {
+    padding: 12px;
+    background-color: #ffebee;
+    color: #c62828;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.leaderboard-section .loading-message,
+.leaderboard-section .empty-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}

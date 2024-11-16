@@ -9,8 +9,10 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "chess.js": "^0.12.1",
     "axios": "^1.7.7",
+    "chess.js": "^0.12.1",
+    "mongodb": "^6.10.0",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-chessboard": "^4.7.2",
     "react-dom": "^18.3.1",
@@ -23,12 +25,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
