@@ -4,6 +4,7 @@ const cors = require("cors")
 const UserModel = require("./user.js")
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'bai_muchi'; 
+const playerSchema = require('./models/players');
 
 const app = express()
 app.use(express.json())
@@ -90,6 +91,30 @@ app.post("/auth/register", async (req, res) => {
 app.get("/verify-token", verifyToken, (req, res) => {
     res.json({ valid: true });
 });
+
+app.get('/api/leaderboard', async (req, res) => {
+    try {
+      const players = await playerSchema.find({})
+        .select('player rating.elo statistics.gamesPlayed statistics.wins')
+        .sort({ 'rating.elo': -1 });
+  
+      const transformedPlayers = players.map(player => ({
+        _id: player._id,
+        name: player.player,
+        rating: player.rating?.elo || 1200,
+        gamesPlayed: player.statistics?.gamesPlayed || 0,
+        wins: player.statistics?.wins || 0
+      }));
+  
+      res.json(transformedPlayers);
+  } catch (err) {
+      console.error('Error in /api/leaderboard:', err);
+      res.status(500).json({ 
+          message: 'Server Error', 
+          error: err.message 
+      });
+  }
+  });
 
 app.listen(3001, () => {
     console.log("server is running on port 3001")
