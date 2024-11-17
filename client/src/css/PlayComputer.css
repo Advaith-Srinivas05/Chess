@@ -127,12 +127,14 @@
 }
 
 #button-new,
-#button-undo {
+#button-undo,
+#button-forfeit {
   background-color: #3f3e3a;
 }
 
 #button-new:hover,
-#button-undo:hover {
+#button-undo:hover,
+#button-forfeit:hover {
   background-color: #454444;
 }
 
@@ -195,4 +197,30 @@
 
 .button-options:hover{
   background-color: rgb(160, 158, 158);
+}
+
+#button-new:disabled {
+  pointer-events: none;
+}
+
+.name-container{
+  background: #3f3e3a;
+  width: 550px;
+  height: 75px;
+  box-sizing: border-box;
+  border: 2px solid black;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.name-container > h3{
+  color: white;
+  min-width: 275px;
+  padding-left: 2rem;
+  font-size: 22px;
+  box-sizing: border-box;
 }

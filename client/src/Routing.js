@@ -4,6 +4,7 @@ import ProtectedRoute from './ProtectedRoute.js';
 import Sidebar from './sidebar.js';
 import Home from './pages/home.js';
 import Play from './pages/play.js'
+import RankedGame from './bots/ranked.js';
 import PlayVsStockfish from './bots/playComputer.js'
 import Practice from './pages/practice.js'
 import Analysis from './pages/analysis.js'
@@ -17,6 +18,7 @@ function App() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/home" element={<ProtectedRoute><Sidebar/><Home/></ProtectedRoute>}/>
                 <Route path="/play" element={<ProtectedRoute><Sidebar/><Play/></ProtectedRoute>}/>
+                <Route path="/ranked" element={<ProtectedRoute><Sidebar/><RankedGame/></ProtectedRoute>}/>
                 <Route path="/bots" element={<ProtectedRoute><Sidebar/><PlayVsStockfish/></ProtectedRoute>}/>
                 <Route path="/practice" element={<ProtectedRoute><Sidebar/><Practice/></ProtectedRoute>}/>
                 <Route path="/analysis" element={<ProtectedRoute><Sidebar/><Analysis/></ProtectedRoute>}/>

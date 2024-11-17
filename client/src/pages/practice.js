@@ -17,6 +17,7 @@ function Card(props){
 function Practice(){
     return(
         <div className={styles["card-container"]}>
+            <Card title="Practice vs Bots" href="/bots" src={require("./../img/play_images/bot_play.png")}>Go head to head vs the computer</Card>
             <Card title="Analysis" href="/analysis" src={require("./../img/practice_images/brilliant.png")}>Go head to head vs the computer</Card>
             <Card title="Custom Board" href="/custom" src={require("./../img/practice_images/practice.webp")}>Challenge your friends to a 1v1 showdown!</Card>
         </div>

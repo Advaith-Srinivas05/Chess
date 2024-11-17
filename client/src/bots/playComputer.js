@@ -247,15 +247,8 @@ const PlayVsStockfish = () => {
           </button>
         </div>
       </div>
-      {showSideSelectionModal && (
-        <SideSelectionModal onSelectSide={handleSideSelection} />
-      )}
-      {gameOver && (
-      <GameOverModal 
-        result={result} 
-        onClose={() => setGameOver(false)} 
-      />
-    )}
+      {showSideSelectionModal && (<SideSelectionModal onSelectSide={handleSideSelection}/>)}
+      {gameOver && (<GameOverModal result={result} onClose={() => setGameOver(false)}/>)}
     </div>
   );
 };

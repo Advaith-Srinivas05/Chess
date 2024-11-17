@@ -31,6 +31,7 @@ function Home() {
         <div className={styles.body}>
           <ul>
             <li>Rating: {userData?.rating || 'Not available'}</li>
+            <li>Peak Rating: 700</li>
             <li>LeaderBoard Position: #20</li>
           </ul>
         </div>
