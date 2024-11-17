@@ -7,7 +7,7 @@ import Play from './pages/play.js'
 import PlayVsStockfish from './bots/playComputer.js'
 import Practice from './pages/practice.js'
 import Analysis from './pages/analysis.js'
-import Leaderboard from './leaderboard.js';
+import Leaderboard from './pages/leaderboard.js';
 
 function App() {
     return (
