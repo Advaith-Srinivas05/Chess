@@ -7,14 +7,28 @@ const playerSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        index: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
     rating: {
         elo: {
             type: Number,
-            default: 1200 // Starting ELO rating
+            default: 700 // Starting ELO rating
         },
         peakElo: {
             type: Number,
-            default: 1200
+            default: 700
         }
     },
     statistics: {
@@ -88,6 +102,8 @@ const playerSchema = new mongoose.Schema({
     }
 });
 
-const players = mongoose.model('players', playerSchema);
-module.exports = players;
+// Add index for email field
+playerSchema.index({ email: 1 });
 
+const Player = mongoose.model('players', playerSchema);
+module.exports = Player;
