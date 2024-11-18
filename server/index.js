@@ -228,45 +228,41 @@ app.post("/api/friends/request", verifyToken, async (req, res) => {
             return res.status(400).json({ message: 'Cannot send friend request to yourself' });
         }
 
-        // Check if already friends or if request already exists
-        const [senderFriendDoc, receiverFriendDoc] = await Promise.all([
-            Friend.findOne({ userId: req.user.userId }),
-            Friend.findOne({ userId: targetUser._id })
+        // Check existing relationship specifically between these two users
+        const [senderRelationship, receiverRelationship] = await Promise.all([
+            Friend.findOne({ 
+                userId: req.user.userId,
+                $or: [
+                    { 'friends.friendId': targetUser._id },
+                    { 'friendRequests.outgoing.userId': targetUser._id }
+                ]
+            }),
+            Friend.findOne({
+                userId: targetUser._id,
+                'friendRequests.incoming.userId': req.user.userId
+            })
         ]);
 
+        if (senderRelationship || receiverRelationship) {
+            console.log("Existing relationship found between these users");
+            return res.status(400).json({ 
+                message: 'You already have a pending request or are already friends with this user'
+            });
+        }
+
         // Create friend documents if they don't exist
-        if (!senderFriendDoc) {
-            console.log("Creating sender friend document");
-            await Friend.create({
-                userId: req.user.userId,
-                friends: [],
-                friendRequests: { incoming: [], outgoing: [] }
-            });
-        }
-
-        if (!receiverFriendDoc) {
-            console.log("Creating receiver friend document");
-            await Friend.create({
-                userId: targetUser._id,
-                friends: [],
-                friendRequests: { incoming: [], outgoing: [] }
-            });
-        }
-
-        // Check existing relationships after ensuring documents exist
-        const existingRelationship = await Friend.findOne({
-            userId: req.user.userId,
-            $or: [
-                { 'friends.friendId': targetUser._id },
-                { 'friendRequests.outgoing.userId': targetUser._id },
-                { 'friendRequests.incoming.userId': targetUser._id }
-            ]
-        });
-
-        if (existingRelationship) {
-            console.log("Existing relationship found:", existingRelationship);
-            return res.status(400).json({ message: 'Friend request already exists or users are already friends' });
-        }
+        const [senderFriendDoc, receiverFriendDoc] = await Promise.all([
+            Friend.findOneAndUpdate(
+                { userId: req.user.userId },
+                { $setOnInsert: { friends: [], friendRequests: { incoming: [], outgoing: [] } } },
+                { upsert: true, new: true }
+            ),
+            Friend.findOneAndUpdate(
+                { userId: targetUser._id },
+                { $setOnInsert: { friends: [], friendRequests: { incoming: [], outgoing: [] } } },
+                { upsert: true, new: true }
+            )
+        ]);
 
         // Create the request objects
         const now = new Date();
@@ -280,39 +276,26 @@ app.post("/api/friends/request", verifyToken, async (req, res) => {
             requestedAt: now
         };
 
-        // Use a transaction to ensure both updates succeed or fail together
-        const session = await mongoose.startSession();
+        // Update both documents without using a transaction
         try {
-            await session.withTransaction(async () => {
+            await Promise.all([
                 // Update sender's outgoing requests
-                await Friend.findOneAndUpdate(
+                Friend.updateOne(
                     { userId: req.user.userId },
-                    {
-                        $addToSet: {
-                            'friendRequests.outgoing': targetRequestObject
-                        }
-                    },
-                    { session, upsert: true }
-                );
-
+                    { $addToSet: { 'friendRequests.outgoing': targetRequestObject } }
+                ),
                 // Update recipient's incoming requests
-                await Friend.findOneAndUpdate(
+                Friend.updateOne(
                     { userId: targetUser._id },
-                    {
-                        $addToSet: {
-                            'friendRequests.incoming': requestObject
-                        }
-                    },
-                    { session, upsert: true }
-                );
-            });
+                    { $addToSet: { 'friendRequests.incoming': requestObject } }
+                )
+            ]);
 
-            await session.endSession();
             console.log("Friend request sent successfully");
             res.json({ message: 'Friend request sent successfully' });
-        } catch (err) {
-            await session.endSession();
-            throw err;
+        } catch (updateError) {
+            console.error('Error updating friend requests:', updateError);
+            throw updateError;
         }
     } catch (err) {
         console.error('Error sending friend request:', err);
