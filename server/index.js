@@ -109,27 +109,19 @@ app.post("/auth/register", async (req, res) => {
     }
 });
 
-// Add login endpoint
+// login endpoint
 app.post("/auth/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const player = await Player.findOne({ email });
         
-        if (!player) {
-            return res.status(401).json({ message: "Invalid email or password" });
-        }
-
-        if (player.password !== password) {
+        if (!player || player.password !== password) {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
         const token = jwt.sign(
-            { 
-                userId: player._id, 
-                email: player.email,
-                name: player.name
-            },
+            { userId: player._id, email: player.email, name: player.name },
             SECRET_KEY,
             { expiresIn: '24h' }
         );
@@ -141,7 +133,16 @@ app.post("/auth/login", async (req, res) => {
                 id: player._id,
                 name: player.name,
                 email: player.email,
-                rating: player.rating.elo
+                rating: player.rating.elo,
+                statistics: {
+                    gamesPlayed: player.statistics.gamesPlayed,
+                    wins: player.statistics.wins,
+                    winRate: player.statistics.winRate
+                },
+                rating: {
+                    elo: player.rating.elo,
+                    peakElo: player.rating.peakElo
+                }
             }
         });
     } catch (error) {
