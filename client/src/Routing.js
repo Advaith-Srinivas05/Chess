@@ -9,6 +9,7 @@ import PlayVsStockfish from './bots/playComputer.js'
 import Practice from './pages/practice.js'
 import Analysis from './pages/analysis.js'
 import Leaderboard from './pages/leaderboard.js';
+import FriendsList from './pages/friends.js';
 
 function App() {
     return (
@@ -24,7 +25,7 @@ function App() {
                 <Route path="/analysis" element={<ProtectedRoute><Sidebar/><Analysis/></ProtectedRoute>}/>
                 <Route path="/leaderboard" element={<ProtectedRoute><Sidebar/><Leaderboard/></ProtectedRoute>}/>
                 <Route path="/learn" element={<ProtectedRoute><Sidebar/></ProtectedRoute>}/>
-                <Route path="/social" element={<ProtectedRoute><Sidebar/></ProtectedRoute>}/>
+                <Route path="/social" element={<ProtectedRoute><Sidebar/><FriendsList/></ProtectedRoute>}/>
             </Routes>
         </BrowserRouter>
     );
