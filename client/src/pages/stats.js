@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import arrow from './img/icons/double_arrow.svg';
-import styles from './css/home.module.css';
+import arrow from './../img/icons/double_arrow.svg';
+import styles from './../css/home.module.css';
 
 const Stats = () => {
   const [leaderboardPosition, setLeaderboardPosition] = useState(null);
@@ -48,7 +48,7 @@ const Stats = () => {
       <div className={styles.heading}>Stats:</div>
       <hr/>
       <div className={styles.body}>
-        <ul className={styles.small}>
+        <ul>
           <li>Rating: {userData.rating?.elo || 'Not available'}</li>
           <li>Games Played: {userData.statistics?.gamesPlayed || 0}</li>
           <li>Win Rate: {userData.statistics?.winRate || '0'}%</li>

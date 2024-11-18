@@ -8,15 +8,6 @@
     color: white; /* General color adjustment */
 }
 
-body {
-    background-color: #2E2E2E; /* Dark background color */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height: 100vh;
-}
-
 .container {
     background-color: #272525; /* Darker container background */
     border-radius: 30px;

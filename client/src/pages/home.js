@@ -1,9 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import ComputerVsComputer from '../bots/CompVsComp.js';
 import styles from './../css/home.module.css';
-import arrow from './../img/icons/double_arrow.svg'
-import Stats from './../stats.js'
+import Stats from './stats.js'
 
 function Home() {
   const userData = JSON.parse(localStorage.getItem('userData'));
