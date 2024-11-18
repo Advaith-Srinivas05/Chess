@@ -78,6 +78,14 @@ app.post("/auth/register", async (req, res) => {
             }
         });
 
+        await Friend.create({
+            userId: player._id,
+            friends: [],
+            friendRequests: { incoming: [], outgoing: [] },
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+
         // Generate JWT token
         const token = jwt.sign(
             { 
