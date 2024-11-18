@@ -18,7 +18,7 @@ function Play(){
                     <li>If the player loses, they will lose 15 Elo points.</li>
                 </ul>
             </ul>
-            <Link to="/ranked" className={styles["link"]}>Accept and Continue<img src={arrow}/></Link>
+            <Link to="/ranked" className={styles["link"]}>Accept and Continue<img src={arrow} alt='arrow'/></Link>
         </div>
     )
 }
