@@ -7,4 +7,8 @@ BY:
 - Abhinav S Kokrady
 - Amitesh Jammula
 
+USAGE:
+- Client: Start client using ```npm start```
+- Server: Start server using ```npm run dev```
 
+Ensure mongoDB is connected
