@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ComputerVsComputer from '../bots/CompVsComp.js';
 import styles from './../css/home.module.css';
 import arrow from './../img/icons/double_arrow.svg'
+import Stats from './../stats.js'
 
 function Home() {
   const userData = JSON.parse(localStorage.getItem('userData'));
@@ -22,28 +23,6 @@ function Home() {
         </div>
       </div>
     );
-  }
-  
-  function Stats(){
-    return(
-      <div className={`${styles.card} ${styles.small}`}>
-        <div className={styles.heading}>Stats:</div><hr/>
-        <div className={styles.body}>
-          <ul>
-            <li>Rating: {userData?.rating || 'Not available'}</li>
-            <li>Peak Rating: 700</li>
-            <li>LeaderBoard Position: #20</li>
-          </ul>
-        </div>
-        <div className={styles.link}>
-          <Link to='/leaderboard'>
-            <div className={styles.link2}>
-              View Full LeaderBoard<img src={arrow}/>
-            </div>
-          </Link>
-        </div>
-      </div>
-    )
   }
   
   function Welcome(){
