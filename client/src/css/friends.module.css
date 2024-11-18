@@ -1,23 +1,174 @@
+/* Friends Page Styles */
+
+/* General Reset */
+.friends-reset * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Styling */
+.friends-body {
+  margin-left: 170px;
+  background-color: #000155;
+  display: flex;
+  font-family: 'Karla', sans-serif;
+  color: white;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Friends Section Styling */
 .friends-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  .friends-container {
-    width: 100%;
-    padding: 20px;
-    background-color: #f0f0f0;
-  }
-  
-  .loading-message,
-  .error-message,
-  .empty-message {
-    text-align: center;
-    padding: 20px;
-    color: #666;
-  }
-  
-  /* Add more styles as needed */
-  
+  width: 100%;
+  max-width: 600px;
+  background: #3f3fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-left: 100px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.friends-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  color: #fca449;
+}
+
+/* Search Section Styling */
+.friends-search-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 92%;
+  height: 10px;
+  padding: 10px;
+  border: 1px solid #551fa1;
+  border-radius: 10px;
+  background-color: #2a2a3b;
+  color: white;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #fca449;
+}
+
+.send-button {
+  width: 20%;
+  height: 30px;
+  margin-top: 10px;
+  background-color: #fa4496;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.friends-send-button:hover {
+  background-color: #e03e88;
+}
+
+/* Request Message Styling */
+.friends-request-message {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #fca449;
+}
+
+/* Requests Section Styling */
+.friends-requests-container {
+  margin-bottom: 20px;
+}
+
+.friends-requests-container h3 {
+  color: #fa4496;
+}
+
+.friends-request-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #2a2a3b;
+}
+
+.friends-request-item span {
+  color: white;
+}
+
+.friends-accept-button {
+  background-color: #367ef5;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 5px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.friends-accept-button:hover {
+  background-color: #316bd6;
+}
+
+/* Friends List Styling */
+.friends-container {
+  margin-bottom: 20px;
+}
+
+.friends-container h3 {
+  color: #fa4496;
+}
+
+.friends-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #2a2a3b;
+}
+
+.friends-list-item span {
+  color: white;
+}
+
+.friends-games-played {
+  font-size: 12px;
+  color: #fca449;
+}
+
+/* Loading and Error Messages */
+.friends-loading {
+  text-align: center;
+  font-size: 16px;
+  margin: 20px 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #000000;
+  color: #fca449;
+}
+
+.friends-error {
+  text-align: center;
+  font-size: 16px;
+  margin: 20px 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fa4496;
+  color: white;
+}
