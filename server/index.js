@@ -521,7 +521,50 @@ app.post('/api/update-rating', async (req, res) => {
     }
 });
 
+// Add this to your existing index.js file, alongside other routes
 
+app.get("/api/user-data", verifyToken, async (req, res) => {
+    try {
+        const player = await Player.findById(req.user.userId);
+        
+        if (!player) {
+            return res.status(404).json({ message: "Player not found" });
+        }
+
+        // Fetch leaderboard to determine position
+        const leaderboard = await Player.find({})
+            .select('player rating.elo')
+            .sort({ 'rating.elo': -1 });
+
+        const leaderboardPosition = leaderboard.findIndex(
+            p => p.player === player.player
+        ) + 1;
+
+        res.json({
+            user: {
+                name: player.player,
+                rating: {
+                    elo: player.rating.elo,
+                    peakElo: player.rating.peakElo
+                },
+                statistics: {
+                    gamesPlayed: player.statistics.gamesPlayed,
+                    wins: player.statistics.wins,
+                    losses: player.statistics.losses,
+                    draws: player.statistics.draws,
+                    winRate: player.statistics.winRate
+                },
+                leaderboardPosition: leaderboardPosition
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).json({ 
+            message: 'Failed to fetch user data',
+            error: error.message 
+        });
+    }
+});
 
 app.listen(3001, () => {
     console.log("server is running on port 3001")

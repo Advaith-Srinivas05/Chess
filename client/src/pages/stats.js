@@ -4,30 +4,43 @@ import arrow from './../img/icons/double_arrow.svg';
 import styles from './../css/home.module.css';
 
 const Stats = () => {
-  const [leaderboardPosition, setLeaderboardPosition] = useState(null);
-  const userData = JSON.parse(localStorage.getItem('userData'));
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const fetchLeaderboardPosition = async () => {
+    const fetchUserData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/leaderboard');
-        const leaderboard = await response.json();
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
         
-        const position = leaderboard.findIndex(player => 
-          player.name === userData?.name
-        ) + 1;
+        if (!token) {
+          return;
+        }
+
+        // Fetch user data from new endpoint
+        const response = await fetch('http://localhost:3001/api/user-data', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+
+        const data = await response.json();
         
-        setLeaderboardPosition(position > 0 ? position : 'Not ranked');
+        // Store user data in state
+        setUserData(data.user);
       } catch (error) {
-        console.error('Error fetching leaderboard position:', error);
-        setLeaderboardPosition('Not available');
+        console.error('Error fetching user data:', error);
+        // Clear user data on error
+        setUserData(null);
       }
     };
 
-    if (userData?.name) {
-      fetchLeaderboardPosition();
-    }
-  }, [userData?.name]);
+    fetchUserData();
+  }, []);
 
   if (!userData) {
     return (
@@ -49,11 +62,11 @@ const Stats = () => {
       <hr/>
       <div className={styles.body}>
         <ul>
-          <li>Rating: {userData.rating?.elo || 'Not available'}</li>
-          <li>Games Played: {userData.statistics?.gamesPlayed || 0}</li>
-          <li>Win Rate: {userData.statistics?.winRate || '0'}%</li>
-          <li>Peak Rating: {userData.rating?.peakElo || userData.rating?.elo || 700}</li>
-          <li>LeaderBoard Position: #{leaderboardPosition || '...'}</li>
+          <li>Rating: {userData.rating.elo || 'Not available'}</li>
+          <li>Games Played: {userData.statistics.gamesPlayed || 0}</li>
+          <li>Win Rate: {userData.statistics.winRate || '0'}%</li>
+          <li>Peak Rating: {userData.rating.peakElo || userData.rating.elo || 700}</li>
+          <li>LeaderBoard Position: #{userData.leaderboardPosition || 'Not ranked'}</li>
         </ul>
       </div>
       <div className={styles.link}>
