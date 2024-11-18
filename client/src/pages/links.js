@@ -21,13 +21,13 @@ const Openings = () => {
             <div className={styles["video-navigation"]}>
                 <h2 className={styles["video-title"]}>Opening Articles</h2>
                 <ul className={styles["video-links"]}>
-                    <li><a href="https://www.chess.com/article/view/the-history-of-the-kings-gambit" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://www.chess.com/article/view/the-history-of-the-kings-gambit" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>The King's Gambit: A History
                     </a></li>
-                    <li><a href="https://thechessworld.com/articles/openings/sicilian-defense-playing-against-it-complete-guide" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://thechessworld.com/articles/openings/sicilian-defense-playing-against-it-complete-guide" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>Sicilian Defense: Playing Against it - Complete Guide
                     </a></li>
-                    <li><a href="https://www.365chess.com/view/italian-game/" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://www.365chess.com/view/italian-game/" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>Ultimate Guide to Winning with the Italian Game
                     </a></li>
                 </ul>
@@ -55,13 +55,13 @@ const MiddleGame = () => {
             <div className={styles["video-navigation"]}>
                 <h2 className={styles["video-title"]}>Middle Game Articles</h2>
                 <ul className={styles["video-links"]}>
-                    <li><a href="https://chessfox.com/5-ways-to-increase-your-control-over-the-centre/" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://chessfox.com/5-ways-to-increase-your-control-over-the-centre/" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>Ways to Increase Your Control Over the Centre
                     </a></li>
-                    <li><a href="https://thechessworld.com/articles/middle-game/7-most-important-middlegame-principles/" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://thechessworld.com/articles/middle-game/7-most-important-middlegame-principles/" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>Most Important Middle Game Principles
                     </a></li>
-                    <li><a href="https://thechessworld.com/articles/middle-game/defective-pawns-structures-middlegame/" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://thechessworld.com/articles/middle-game/defective-pawns-structures-middlegame/" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>Defective Pawns Structures in the Middle Game
                     </a></li>
                 </ul>
@@ -89,13 +89,13 @@ const Endgame = () => {
             <div className={styles["video-navigation"]}>
                 <h2 className={styles["video-title"]}>Endgame Articles</h2>
                 <ul className={styles["video-links"]}>
-                    <li><a href="https://www.ragchess.com/how-to-win-king-and-pawn-vs-king-endgames/" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://www.ragchess.com/how-to-win-king-and-pawn-vs-king-endgames/" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>How to Win a King and Pawn vs King Endgame
                     </a></li>
-                    <li><a href="https://www.chess.com/terms/chess-checkmate-king-queen" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://www.chess.com/terms/chess-checkmate-king-queen" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>Checkmate with King and Queen
                     </a></li>
-                    <li><a href="https://www.chess.com/terms/two-knights-checkmate-chess" target='_blank' className={styles["video-link"]}>
+                    <li><a href="https://www.chess.com/terms/two-knights-checkmate-chess" target='_blank' rel="noopener noreferrer" className={styles["video-link"]}>
                         <img src={arrow} alt="arrow"/>How to Win with Two Knights
                     </a></li>
                 </ul>

@@ -102,9 +102,7 @@ const FriendsList = () => {
 
   return (
     <div className={styles['friends-section']}>
-      <h2>Friends</h2>
-      
-      {/* Friend Request Form */}
+      <h2>SOCIAL</h2>
       <form onSubmit={handleSendRequest} className={styles['search-section']}>
         <input
           type="text"
@@ -112,21 +110,20 @@ const FriendsList = () => {
           onChange={(e) => setSearchName(e.target.value)}
           placeholder="Enter player name"
           className={styles['search-input']}
-        />
+        /><br/>
         <button type="submit" className={styles['send-button']}>
-          Send
+          Send friend request
         </button>
       </form>
-      <hr className='lines'/>
+      <br/><hr/>
       {requestMessage && (
         <div className={styles['request-message']}>{requestMessage}</div>
       )}
 
-      {/* Friend Requests Section */}
       <div className={styles['requests-container']}>
         <h3>Friend Requests</h3>
         {friendRequests.length === 0 ? (
-          <p>No pending friend requests</p>
+          <p style={{"paddingLeft":"20px"}}>No pending friend requests</p>
         ) : (
           <ul>
             {friendRequests.map((request) => (
@@ -148,7 +145,7 @@ const FriendsList = () => {
       <div className={styles['friends-container']}>
         <h3>Your Friends</h3>
         {friends.length === 0 ? (
-          <p>No friends added yet</p>
+          <p style={{"paddingLeft":"20px"}}>No friends added yet</p>
         ) : (
           <ul>
             {friends.map((friend) => (

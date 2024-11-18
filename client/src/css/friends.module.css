@@ -1,6 +1,3 @@
-/* Friends Page Styles */
-
-/* General Reset */
 .friends-reset * {
   margin: 0;
   padding: 0;
@@ -24,11 +21,13 @@
 .friends-section {
   width: 100%;
   max-width: 600px;
-  background: #3f3fff;
+  background: #3f3e3a;
   border-radius: 10px;
   padding: 20px;
   margin-left: 100px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: white;
 }
 
 .friends-section h2 {
@@ -61,7 +60,7 @@
 }
 
 .send-button {
-  width: 20%;
+  width: 30%;
   height: 30px;
   margin-top: 10px;
   background-color: #fa4496;
@@ -71,6 +70,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .friends-send-button:hover {
@@ -129,8 +129,8 @@
   margin-bottom: 20px;
 }
 
-.friends-container h3 {
-  color: #fa4496;
+.friends-container h3, .requests-container h3 {
+  color: #fca449;;
 }
 
 .friends-list-item {
