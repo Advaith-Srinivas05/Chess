@@ -465,7 +465,7 @@ app.get('/api/leaderboard', async (req, res) => {
 });
 
 const calculateElo = (currentElo, opponentElo, result) => {
-    const K = 32; // K-factor
+    const K = 30;
     const expected = 1 / (1 + Math.pow(10, (opponentElo - currentElo) / 400));
     const score = result === 'win' ? 1 : result === 'draw' ? 0.5 : 0;
     return Math.round(K * (score - expected));
@@ -478,24 +478,20 @@ app.post('/api/update-rating', async (req, res) => {
 
         if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
-        const decoded = jwt.verify(token, SECRET_KEY); // Use your secret key
+        const decoded = jwt.verify(token, SECRET_KEY);
         const player = await Player.findOne({ email: decoded.email });
 
         if (!player) return res.status(404).json({ message: 'Player not found' });
 
-        // Opponent rating (example: retrieved from the bot or other player)
-        const opponentRating = player.rating.elo; // Replace with actual logic if dynamic
+        const opponentRating = player.rating.elo;
 
-        // Calculate ELO change
         const eloChange = calculateElo(player.rating.elo, opponentRating, gameResult);
         player.rating.elo += eloChange;
 
-        // Update peakElo if necessary
         if (player.rating.elo > player.rating.peakElo) {
             player.rating.peakElo = player.rating.elo;
         }
 
-        // Update statistics
         player.statistics.gamesPlayed += 1;
         if (gameResult === 'win') {
             player.statistics.wins += 1;
@@ -505,17 +501,15 @@ app.post('/api/update-rating', async (req, res) => {
             }
         } else if (gameResult === 'loss') {
             player.statistics.losses += 1;
-            player.achievements.winStreak = 0; // Reset streak on loss
+            player.achievements.winStreak = 0; 
         } else if (gameResult === 'draw') {
             player.statistics.draws += 1;
         }
 
-        // Calculate win rate
         player.statistics.winRate = (
             (player.statistics.wins / player.statistics.gamesPlayed) * 100
         ).toFixed(2);
 
-        // Save player data
         await player.save();
 
         return res.json({
@@ -529,8 +523,6 @@ app.post('/api/update-rating', async (req, res) => {
     }
 });
 
-// Add this to your existing index.js file, alongside other routes
-
 app.get("/api/user-data", verifyToken, async (req, res) => {
     try {
         const player = await Player.findById(req.user.userId);
@@ -539,7 +531,6 @@ app.get("/api/user-data", verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Player not found" });
         }
 
-        // Fetch leaderboard to determine position
         const leaderboard = await Player.find({})
             .select('player rating.elo')
             .sort({ 'rating.elo': -1 });

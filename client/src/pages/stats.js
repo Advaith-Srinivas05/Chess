@@ -64,7 +64,6 @@ const Stats = () => {
         <ul>
           <li>Rating: {userData.rating.elo || 'Not available'}</li>
           <li>Games Played: {userData.statistics.gamesPlayed || 0}</li>
-          <li>Win Rate: {userData.statistics.winRate || '0'}%</li>
           <li>Peak Rating: {userData.rating.peakElo || userData.rating.elo || 700}</li>
           <li>LeaderBoard Position: #{userData.leaderboardPosition || 'Not ranked'}</li>
         </ul>

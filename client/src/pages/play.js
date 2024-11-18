@@ -13,12 +13,12 @@ function Play(){
                 <li>Sides (black or white) are assigned randomly before the game begins.</li>
                 <li>The player's Elo rating is adjusted after each game based on the result, using the following calculation:</li>
                 <ul>
-                    <li>If the player wins, they will gain 16 Elo points.</li>
+                    <li>If the player wins, they will gain 15 Elo points.</li>
                     <li>If the game is a draw, there is no Elo gain/lost.</li>
-                    <li>If the player loses, they will lose 16 Elo points.</li>
+                    <li>If the player loses, they will lose 15 Elo points.</li>
                 </ul>
             </ul>
-            <Link to="/ranked" className={styles["link"]}>Accept and Continue<img src={arrow}/></Link>
+            <Link to="/ranked" className={styles["link"]}>Accept and Continue<img src={arrow} alt='arrow'/></Link>
         </div>
     )
 }

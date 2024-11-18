@@ -128,7 +128,7 @@ const FriendsList = () => {
           <ul>
             {friendRequests.map((request) => (
               <li key={request.id} className={styles['request-item']}>
-                <span>{request.name}</span>
+                <span>{request.name} </span>
                 <button
                   onClick={() => handleAcceptRequest(request.id)}
                   className={styles['accept-button']}
@@ -150,7 +150,7 @@ const FriendsList = () => {
           <ul>
             {friends.map((friend) => (
               <li key={friend.id} className={styles['friend-item']}>
-                <span>{friend.name}</span>
+                <span>{friend.name}, </span>
                 <span className={styles['games-played']}>
                   Games played together: {friend.gamesPlayed}
                 </span>
