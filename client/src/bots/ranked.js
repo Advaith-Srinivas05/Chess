@@ -26,7 +26,7 @@ const RankedGame = () => {
     useEffect(() => {
         const initialSide = Math.random() < 0.5 ? 'white' : 'black';
         handleSideSelection(initialSide);
-    }, []); // Empty dependency array means this runs once on mount
+    }, []);
 
     function onDrop(sourceSquare, targetSquare, piece) {
         if (!isPlayerTurn) return false;
@@ -101,13 +101,12 @@ const RankedGame = () => {
     }
     
     function forfeit() {
-        // Handle forfeit and stop the game
+        if (!isGameActive) return;
         setGameOver(true);
-        setIsGameActive(false); // Disable further interactions
-        clearTimeout(currentTimeout); // Clear pending engine moves
-        engine.quit(); // Stop the engine
+        setIsGameActive(false);
+        clearTimeout(currentTimeout);
+        engine.quit();
     
-        // Display forfeit message and update rating
         setResult("You forfeited the game!");
         updateRating('loss', "You forfeited the game!");
     }
@@ -118,12 +117,12 @@ const RankedGame = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`, // Ensure the token is valid
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
                 gameResult,
                 playerRating: playerElo,
-                moves, // Include move history if required by the backend
+                moves,
             }),
         })
         .then((response) => {
@@ -133,10 +132,9 @@ const RankedGame = () => {
             return response.json();
         })
         .then((data) => {
-            console.log('Rating update response:', data); // Debugging: Inspect server response
+            console.log('Rating update response:', data);
             const userData = JSON.parse(localStorage.getItem('userData'));
 
-            // Ensure data contains updated rating info
             if (data?.newRating) {
                 userData.rating = data.newRating;
                 localStorage.setItem('userData', JSON.stringify(userData));
@@ -283,7 +281,16 @@ const RankedGame = () => {
                     >
                         New Game
                     </button>
-                    <button id='button-forfeit' className="button" onClick={forfeit}>
+                    <button 
+                        id='button-forfeit' 
+                        className="button" 
+                        onClick={forfeit} 
+                        disabled={!isGameActive}
+                        style={{
+                            opacity: !isGameActive ? 0.5 : 1,
+                            cursor: !isGameActive ? 'not-allowed' : 'pointer'
+                        }}
+                    >
                         Forfeit
                     </button>
                 </div>
