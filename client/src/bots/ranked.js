@@ -19,48 +19,111 @@ const RankedGame = () => {
     const [isGameActive, setIsGameActive] = useState(false);
     const chessboardRef = useRef(null);
     const movesEndRef = useRef(null);
-    
+
     const playerData = JSON.parse(localStorage.getItem('userData'));
-    const playerElo = playerData?.rating?.elo
+    const playerElo = playerData?.rating?.elo;
 
     useEffect(() => {
         const initialSide = Math.random() < 0.5 ? 'white' : 'black';
         handleSideSelection(initialSide);
     }, []);
 
-    function onDrop(sourceSquare, targetSquare, piece) {
+    const updateMoves = (history) => {
+        setMoves([...history]);
+    };
+
+    const handleGameOver = (gameResult = null) => {
+        setGameOver(true);
+        setIsGameActive(false);
+        let resultMessage;
+
+        if (gameResult === 'forfeit') {
+            resultMessage = "You forfeited the game!";
+        } else if (game.in_checkmate()) {
+            const winner = game.turn() === 'w' ? 'black' : 'white';
+            const playerWon = winner === playerColor;
+            gameResult = playerWon ? 'win' : 'loss';
+            resultMessage = playerWon ? 'You won!' : 'You lost!';
+            setResult(resultMessage);        
+        } else {
+            gameResult = 'draw';
+            resultMessage = "It's a draw!";
+        }
+
+        setResult(resultMessage);
+        updateRating(gameResult, resultMessage);
+    };
+
+    const updateRating = (gameResult, resultMessage) => {
+        const token = localStorage.getItem('token');
+        fetch('http://localhost:3001/api/update-rating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                gameResult,
+                playerRating: playerElo,
+                moves,
+            }),
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error(`Failed to update rating: ${response.statusText}`);
+                return response.json();
+            })
+            .then((data) => {
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                if (data?.newRating) {
+                    userData.rating = data.newRating;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    setResult(
+                        `${resultMessage} (Rating ${data.ratingChange >= 0 ? '+' : ''}${data.ratingChange})`
+                    );
+                } else {
+                    throw new Error('Invalid response: Missing newRating');
+                }
+            })
+            .catch((err) => {
+                console.error('Error updating rating:', err);
+                setResult('Error updating rating. Please try again later.');
+            });
+        engine.quit();
+    };
+
+    const onDrop = (sourceSquare, targetSquare, piece) => {
         if (!isPlayerTurn) return false;
 
         const move = game.move({
             from: sourceSquare,
             to: targetSquare,
-            promotion: piece[1].toLowerCase() ?? "q"
+            promotion: piece[1].toLowerCase() ?? 'q',
         });
 
         if (move === null) return false;
-        
+
         setGamePosition(game.fen());
         setIsPlayerTurn(false);
         updateMoves(game.history());
 
         if (game.game_over()) {
             handleGameOver();
-        } else if (!game.in_draw()) {
+        } else {
             const newTimeout = setTimeout(findBestMove, 2000);
             setCurrentTimeout(newTimeout);
         }
 
         return true;
-    }
+    };
 
-    function findBestMove() {
+    const findBestMove = () => {
         engine.evaluatePosition(game.fen(), playerElo);
         engine.onMessage(({ bestMove }) => {
             if (bestMove) {
                 game.move({
                     from: bestMove.substring(0, 2),
                     to: bestMove.substring(2, 4),
-                    promotion: bestMove.substring(4, 5) || "q"
+                    promotion: bestMove.substring(4, 5) || 'q',
                 });
                 setGamePosition(game.fen());
                 setIsPlayerTurn(true);
@@ -71,89 +134,31 @@ const RankedGame = () => {
                 }
             }
         });
-    }
+    };
 
-    function updateMoves(history) {
-        setMoves([...history]);
-    }
-
-    function handleGameOver(gameResult = null) {
-        setGameOver(true);
-        setIsGameActive(false);
-        let resultMessage;
-    
-        if (gameResult === 'forfeit') {
-            resultMessage = "You forfeited the game!";
-            setResult(resultMessage);
-        } else if (game.in_checkmate()) {
-            const winner = game.turn() === 'w' ? 'black' : 'white';
-            const playerWon = winner !== playerColor;
-            gameResult = playerWon ? 'win' : 'loss';
-            resultMessage = playerWon ? 'You won!' : 'You lost!';
-            setResult(resultMessage);
-        } else {
-            gameResult = 'draw';
-            resultMessage = "It's a draw!";
-            setResult(resultMessage);
-        }
-    
-        updateRating(gameResult, resultMessage);
-    }
-    
-    function forfeit() {
+    const forfeit = () => {
         if (!isGameActive) return;
-        setGameOver(true);
-        setIsGameActive(false);
-        clearTimeout(currentTimeout);
-        engine.quit();
-    
-        setResult("You forfeited the game!");
-        updateRating('loss', "You forfeited the game!");
-    }
-    
-    function updateRating(gameResult, resultMessage) {
-        const token = localStorage.getItem('token');
-        fetch('http://localhost:3001/api/update-rating', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                gameResult,
-                playerRating: playerElo,
-                moves,
-            }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Failed to update rating: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log('Rating update response:', data);
-            const userData = JSON.parse(localStorage.getItem('userData'));
+        handleGameOver('forfeit');
+    };
 
-            if (data?.newRating) {
-                userData.rating = data.newRating;
-                localStorage.setItem('userData', JSON.stringify(userData));
-                setResult(
-                    `${resultMessage} (Rating ${data.ratingChange >= 0 ? '+' : ''}${data.ratingChange})`
-                );
-            } else {
-                throw new Error('Invalid response: Missing newRating');
-            }
-        })
-        .catch((err) => {
-            console.error('Error updating rating:', err);
-            setResult('Error updating rating. Please try again later.');
-        });
-    
-        engine.quit();
-    }
-    
-    
+    const handleSideSelection = (color) => {
+        setIsGameActive(true);
+        setPlayerColor(color);
+        setBoardOrientation(color);
+        game.reset();
+        setGamePosition(game.fen());
+        setIsPlayerTurn(color === 'white');
+        chessboardRef.current?.clearPremoves();
+        clearTimeout(currentTimeout);
+        setMoves([]);
+        setGameOver(false);
+        setShowSideSelectionModal(false);
+
+        if (color === 'black') {
+            const newTimeout = setTimeout(findBestMove, 2000);
+            setCurrentTimeout(newTimeout);
+        }
+    };
 
     const customPieces = useMemo(() => {
         const pieces = ["wP", "wN", "wB", "wR", "wQ", "wK", "bP", "bN", "bB", "bR", "bQ", "bK"];
@@ -172,50 +177,38 @@ const RankedGame = () => {
         });
         return pieceComponents;
     }, []);
-
-    useEffect(() => {
-        movesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [moves]);
+    
+    const SideSelectionModal = ({ onSelectSide }) => (
+        <div className="modal">
+            <div className="modal-content">
+                <h2>Choose Your Side</h2>
+                <div className="button-container">
+                    <button id="play-white" className="button-options" onClick={() => onSelectSide('white')}>
+                        Play as White
+                    </button>
+                    <button id="play-black" className="button-options" onClick={() => onSelectSide('black')}>
+                        Play as Black
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
     
     const GameOverModal = ({ result, onClose }) => (
         <div className="modal">
             <div className="modal-content">
                 <h2>{result}</h2>
-                <button id='close-button' className='button-options' onClick={onClose}>Close</button>
+                <button id="close-button" className="button-options" onClick={onClose}>
+                    Close
+                </button>
             </div>
         </div>
     );
     
-    const SideSelectionModal = ({ onSelectSide }) => (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Choose Your Side</h2>
-            <div className="button-container">
-              <button id="play-white" className='button-options' onClick={() => onSelectSide('white')}>Play as White</button>
-              <button id="play-black" className='button-options' onClick={() => onSelectSide('black')}>Play as Black</button>
-            </div>
-          </div>
-        </div>
-    );
-      
-    const handleSideSelection = (color) => {
-        setIsGameActive(true);
-        setPlayerColor(color);
-        setBoardOrientation(color);
-        game.reset();
-        setGamePosition(game.fen());
-        setIsPlayerTurn(color === 'white');
-        chessboardRef.current?.clearPremoves();
-        clearTimeout(currentTimeout);
-        setMoves([]);
-        setGameOver(false);
-        setShowSideSelectionModal(false);
-        
-        if (color === 'black') {
-            const newTimeout = setTimeout(findBestMove, 2000);
-            setCurrentTimeout(newTimeout);
-        }
-    };
+
+    useEffect(() => {
+        movesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [moves]);
 
     console.log('Player Data:', playerData);
 
