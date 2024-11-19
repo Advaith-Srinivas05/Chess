@@ -41,13 +41,9 @@ class Engine {
       this.stockfish.postMessage(`position fen ${fen}`);
       this.stockfish.postMessage(`go depth ${depth}`);
     }
-  
-    // Stop the engine
     stop() {
       this.sendMessage("stop");
     }
-  
-    // Quit the engine
     quit() {
       this.sendMessage("quit");
     }

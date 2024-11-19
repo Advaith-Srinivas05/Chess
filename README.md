@@ -8,7 +8,8 @@ BY:
 - Amitesh Jammula
 
 USAGE:
+- Run ```npm install``` on both client and server folders
 - Client: Start client using ```npm start```
 - Server: Start server using ```npm run dev```
 
-Ensure mongoDB is connected
+Ensure mongoDB is connected.

@@ -219,7 +219,6 @@ const PlayVsStockfish = () => {
                     </tr>
                   ) : null
                 ))}
-                {/* Empty div used for scrolling to the bottom */}
                 <tr>
                   <td colSpan="3">
                     <div ref={movesEndRef} />
@@ -233,7 +232,7 @@ const PlayVsStockfish = () => {
           <button
             id='button-new'
             className="button"
-            onClick={() => setShowSideSelectionModal(true)} // Open side selection modal
+            onClick={() => setShowSideSelectionModal(true)}
           >
             New Game
           </button>
@@ -241,7 +240,7 @@ const PlayVsStockfish = () => {
           <button
             id='button-undo'
             className="button"
-            onClick={undoLastMove} // Call the updated undo function
+            onClick={undoLastMove}
           >
             Undo
           </button>

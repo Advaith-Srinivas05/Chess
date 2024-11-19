@@ -86,7 +86,7 @@ const FriendsList = () => {
       });
 
       if (response.ok) {
-        fetchFriends(); // Refresh the friends list
+        fetchFriends();
       } else {
         const data = await response.json();
         setError(data.message || 'Failed to accept request');
@@ -141,7 +141,6 @@ const FriendsList = () => {
         )}
       </div>
 
-      {/* Friends List Section */}
       <div className={styles['friends-container']}>
         <h3>Your Friends</h3>
         {friends.length === 0 ? (

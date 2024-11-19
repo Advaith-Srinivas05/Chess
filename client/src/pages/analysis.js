@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Chessboard } from "react-chessboard";
-import Chess from "chess.js"; // Import chess.js for managing chess logic
-import Engine from "./../bots/engine2.js"; // Import your engine file
-import styles from './../css/analysis.module.css'; // Import the CSS file
+import Chess from "chess.js";
+import Engine from "./../bots/engine2.js";
+import styles from './../css/analysis.module.css';
 
 const Analysis = () => {
   const engine = useMemo(() => new Engine(), []);
@@ -15,7 +15,7 @@ const Analysis = () => {
   const [possibleMate, setPossibleMate] = useState("");
   const [arrows, setArrows] = useState([]);
 
-  // New function to apply FEN input to the board
+  // Function to apply FEN input to the board
   const applyFenToBoard = () => {
     const fen = inputRef.current.value;
     const { valid } = game.validate_fen(fen);

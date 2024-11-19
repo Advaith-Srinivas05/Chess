@@ -18,16 +18,15 @@ class Engine {
         this.stockfish.postMessage(message);
     }
 
-    // Convert ELO to Stockfish skill level (0-20)
     eloToSkillLevel(elo) {
         // Mapping ELO ranges to skill levels
-        if (elo < 800) return 2;  // Beginner
-        if (elo < 1000) return 5; // Novice
-        if (elo < 1200) return 8; // Intermediate
-        if (elo < 1400) return 12; // Advanced
-        if (elo < 1600) return 15; // Expert
-        if (elo < 1800) return 18; // Master
-        return 20; // Grandmaster
+        if (elo < 800) return 2;
+        if (elo < 1000) return 5;
+        if (elo < 1200) return 8;
+        if (elo < 1400) return 12;
+        if (elo < 1600) return 15;
+        if (elo < 1800) return 18;
+        return 20;
     }
 
     evaluatePosition(fen, playerElo) {
