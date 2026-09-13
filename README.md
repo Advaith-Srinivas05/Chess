@@ -1,10 +1,10 @@
-# Chess
+# Chesscube
 
 A MERN chess site.
 
 ## Stack
 
-- **Client:** React + Vite, React Router, [react-chessboard](https://github.com/Clariity/react-chessboard)
+- **Client:** React + Vite, React Router, [react-chessboard](https://github.com/Clariity/react-chessboard), [chess.js](https://github.com/jhlywa/chess.js), [Stockfish.js](https://github.com/nmrugg/stockfish.js)
 - **Server:** Node.js + Express, Mongoose
 - **Database:** MongoDB Atlas
 
@@ -54,3 +54,5 @@ Piece sets in `client/public/pieces` come from the [Lichess](https://github.com/
 | california | Jerry S. | CC BY-NC-SA 4.0 |
 | chessnut | Alexis Luengas | Apache 2.0 |
 | fantasy | Maurizio Monge | MIT |
+
+The home page engine game runs the lite single-threaded build of [Stockfish.js](https://github.com/nmrugg/stockfish.js) (GPLv3), a WebAssembly port of [Stockfish](https://github.com/official-stockfish/Stockfish).
