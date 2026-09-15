@@ -111,7 +111,7 @@ cd client && npm run lessons:check # every lesson position and goal is valid and
 | Where | Variable | Required | Description |
 | --- | --- | --- | --- |
 | server | `MONGODB_URI` | yes | MongoDB connection string |
-| server | `JWT_SECRET` | yes | Long random string for signing session and socket tokens: `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` |
+| server | `JWT_SECRET` | yes | Random string of at least 32 bytes for signing session and socket tokens: `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` |
 | server | `CLIENT_ORIGIN` | | Allowed frontend origin(s), comma-separated (default `http://localhost:3000`) |
 | server | `PORT` | | API port (default `3001`) |
 | server | `NODE_ENV` | | `production` in deployment (secure cookies, proxy trust, SMTP required) |
@@ -129,20 +129,12 @@ Browser ── REST /api/* ── Vercel rewrite ──► Koyeb: Express + Sock
 ```
 
 - **Database:** a MongoDB Atlas Free cluster. Allow connections from the API host (or `0.0.0.0/0`) under Network Access.
-- **API (Koyeb, free instance):** deploy the repository with `server` as the work directory, build command `npm install`, run command `npm start`, and a health check on `/api/health`. Set the server variables above with `NODE_ENV=production` and `CLIENT_ORIGIN` set to the Vercel URL. Koyeb allows outbound SMTP on port 587, which Gmail needs.
+- **API (Koyeb, free instance):** deploy the repository with `server` as the work directory, build command `npm ci`, run command `npm start`, and a health check on `/api/health`. Set the server variables above with `NODE_ENV=production` and `CLIENT_ORIGIN` set to the Vercel URL. Koyeb allows outbound SMTP on port 587, which Gmail needs.
 - **Client (Vercel):** import the repository with `client` as the root directory (Vite preset). Set `VITE_API_URL` to the Koyeb URL and `VITE_GOOGLE_CLIENT_ID`.
-- **`/api` rewrite:** REST calls use the relative `/api` path so the session cookie stays first-party. Add the API rewrite before the single-page-app fallback in `client/vercel.json`:
+- **`/api` rewrite:** REST calls use the relative `/api` path so the session cookie stays first-party. In `client/vercel.json`, replace `YOUR-KOYEB-APP` in the API rewrite with your Koyeb app's host name. A Vercel build fails with a clear message while the placeholder is still there or `VITE_API_URL` is missing.
+- **Google sign-in:** add the Vercel URL to the OAuth client's Authorised JavaScript origins.
 
-  ```json
-  {
-    "rewrites": [
-      { "source": "/api/:path*", "destination": "https://<your-app>.koyeb.app/api/:path*" },
-      { "source": "/(.*)", "destination": "/index.html" }
-    ]
-  }
-  ```
-
-Live games are held in the API's memory, so run a single instance. Active games are saved on shutdown and restored on start.
+Live games are held in the API's memory, so run a single instance. Active games are saved on shutdown (SIGTERM) and restored on start. The API logs its database size at startup and daily, with a warning above 400 MB.
 
 ## Credits
 
