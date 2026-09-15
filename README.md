@@ -16,7 +16,7 @@ A free chess site built on the MERN stack. Accounts are optional: guests can pla
 ## Stack
 
 - **Client:** React 19 + Vite, React Router, [react-chessboard](https://github.com/Clariity/react-chessboard), [chessops](https://github.com/niklasf/chessops), [Socket.IO client](https://socket.io/), [Stockfish.js](https://github.com/nmrugg/stockfish.js), [chess.js](https://github.com/jhlywa/chess.js) (home page engine game), [Google Identity Services](https://developers.google.com/identity/gsi/web)
-- **Server:** Node.js 22 + Express 5, Mongoose, [Socket.IO](https://socket.io/), chessops, [Nodemailer](https://nodemailer.com/) + the Gmail API, zod, bcryptjs, JSON Web Tokens
+- **Server:** Node.js 22 + Express 5, Mongoose, [Socket.IO](https://socket.io/), chessops, [Nodemailer](https://nodemailer.com/) and Google Apps Script for email, zod, bcryptjs, JSON Web Tokens
 - **Database:** MongoDB Atlas
 
 ## Project structure
@@ -34,7 +34,7 @@ client/                 React app (deployed to Vercel)
     pages/              one component per route
     shared/             constants shared with the server (kept identical)
 server/                 Express API + Socket.IO (deployed to Render)
-  scripts/              importPuzzles.js, storageReport.js, sendTestEmail.js, gmailAuth.js
+  scripts/              importPuzzles.js, storageReport.js, sendTestEmail.js, appsScriptMailer.gs
   src/
     config/             environment variables
     middleware/         auth, validation, rate limits, errors
@@ -71,15 +71,17 @@ In development Vite proxies `/api` to `http://localhost:3001`, and the Socket.IO
 
 ### Email
 
-Sign-up, password reset and email change send 6-digit codes from a Gmail account, by one of two routes. Without either, the server prints emails to the console in development; one is required when `NODE_ENV=production`. If both are set, the Gmail API is used.
+Sign-up, password reset and email change send 6-digit codes from a Gmail account, by one of two routes. Without either, the server prints emails to the console in development; one is required when `NODE_ENV=production`. If both are set, Apps Script is used.
 
-**Gmail API over HTTPS (use this in production).** Free hosts such as Render block the SMTP ports, but HTTPS always works.
+**Google Apps Script over HTTPS (use this in production).** Free hosts such as Render block the SMTP ports. A small script in the sending Gmail account's own Google Drive sends the email; the server calls it over HTTPS. Limit: about 100 emails a day on a personal Gmail account.
 
-1. In the [Google Cloud console](https://console.cloud.google.com/) (the same project as Google sign-in is fine), open **APIs & Services → Library**, find **Gmail API** and click **Enable**.
-2. Under **Google Auth Platform → Audience**, make sure the app is **In production** (published). Refresh tokens issued while it is in Testing expire after 7 days.
-3. Under **Google Auth Platform → Clients**, create a client of type **Desktop app**. Copy its client ID and secret.
-4. In `server/.env`, set `GMAIL_USER` (the sending address), `GMAIL_CLIENT_ID` and `GMAIL_CLIENT_SECRET`.
-5. Run `cd server && npm run gmail:auth`, open the printed link, sign in with that Gmail account and allow sending. Google warns that the app isn't verified: choose **Advanced → Go to … (unsafe)**; only you see this. The terminal prints `GMAIL_REFRESH_TOKEN=…`; add it to `server/.env`.
+1. Generate a secret: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+2. Signed in with the sending Gmail account, open <https://script.google.com> and create a **New project**. Replace the contents of `Code.gs` with [`server/scripts/appsScriptMailer.gs`](server/scripts/appsScriptMailer.gs) and save.
+3. **Project Settings** (gear icon) → **Script properties** → **Add script property**: name `SECRET`, value the secret from step 1 → **Save script properties**.
+4. **Deploy → New deployment** → type **Web app**, execute as **Me**, who has access **Anyone** → **Deploy**. Authorise with the same account (Google warns the app isn't verified: **Advanced → Go to … (unsafe)**; it's your own script).
+5. Copy the web app URL (ends in `/exec`) into `MAIL_SCRIPT_URL` and the secret into `MAIL_SCRIPT_SECRET`.
+
+After editing the script later, publish it with **Deploy → Manage deployments → Edit → Version: New version**; the URL stays the same.
 
 **SMTP with an app password (simplest locally).**
 
@@ -127,26 +129,24 @@ cd client && npm run lessons:check # every lesson position and goal is valid and
 | server | `PORT` | | API port (default `3001`) |
 | server | `NODE_ENV` | | `production` in deployment (secure cookies, proxy trust, email required) |
 | server | `GOOGLE_CLIENT_ID` | | OAuth client ID for Google sign-in |
-| server | `GMAIL_USER` | in production* | Gmail address that sends email (Gmail API route) |
-| server | `GMAIL_CLIENT_ID` | in production* | Desktop app OAuth client ID |
-| server | `GMAIL_CLIENT_SECRET` | in production* | Desktop app OAuth client secret |
-| server | `GMAIL_REFRESH_TOKEN` | in production* | From `npm run gmail:auth` |
+| server | `MAIL_SCRIPT_URL` | in production* | Apps Script web app URL (`https://script.google.com/macros/s/…/exec`) |
+| server | `MAIL_SCRIPT_SECRET` | in production* | The `SECRET` script property, at least 32 characters |
 | server | `SMTP_USER` | | Gmail address (SMTP route) |
 | server | `SMTP_PASS` | | Gmail app password (SMTP route) |
-
-\* Production needs the four `GMAIL_*` variables, or `SMTP_USER` and `SMTP_PASS` on a host that allows port 587.
 | client | `VITE_API_URL` | yes | Origin of the API, used by the Socket.IO connection (no trailing slash) |
 | client | `VITE_GOOGLE_CLIENT_ID` | | Same value as `GOOGLE_CLIENT_ID` |
+
+\* Production needs `MAIL_SCRIPT_URL` and `MAIL_SCRIPT_SECRET`, or `SMTP_USER` and `SMTP_PASS` on a host that allows port 587.
 
 ## Deployment
 
 ```
 Browser ── REST /api/* ── Vercel rewrite ──► Render: Express + Socket.IO ──► MongoDB Atlas
-        └─ Socket.IO (websocket) ──────────► Render            └──► Gmail API (HTTPS)
+        └─ Socket.IO (websocket) ──────────► Render            └──► Apps Script → Gmail
 ```
 
 - **Database:** a MongoDB Atlas Free cluster. Allow connections from the API host (or `0.0.0.0/0`) under Network Access.
-- **API (Render, free web service):** root directory `server`, build command `npm ci`, start command `npm start`, health check path `/api/health`. Set the server variables above with `NODE_ENV=production`, the four `GMAIL_*` variables (Render's free tier blocks SMTP) and `CLIENT_ORIGIN` set to the Vercel URL. Render provides `PORT`. A free service sleeps after 15 minutes without traffic and takes about a minute to wake; the site shows a "Waking up the server" note meanwhile.
+- **API (Render, free web service):** root directory `server`, build command `npm ci`, start command `npm start`, health check path `/api/health`. Set the server variables above with `NODE_ENV=production`, `MAIL_SCRIPT_URL` and `MAIL_SCRIPT_SECRET` (Render's free tier blocks SMTP) and `CLIENT_ORIGIN` set to the Vercel URL. Render provides `PORT`. A free service sleeps after 15 minutes without traffic and takes about a minute to wake; the site shows a "Waking up the server" note meanwhile.
 - **Client (Vercel):** import the repository with `client` as the root directory (Vite preset). Set `VITE_API_URL` to the Render URL and `VITE_GOOGLE_CLIENT_ID`.
 - **`/api` rewrite:** REST calls use the relative `/api` path so the session cookie stays first-party. In `client/vercel.json`, replace `YOUR-RENDER-APP` in the API rewrite with your Render service's name. A Vercel build fails with a clear message while the placeholder is still there or `VITE_API_URL` is missing.
 - **Google sign-in:** add the Vercel URL to the OAuth client's Authorised JavaScript origins.
