@@ -16,7 +16,7 @@ A free chess site built on the MERN stack. Accounts are optional: guests can pla
 ## Stack
 
 - **Client:** React 19 + Vite, React Router, [react-chessboard](https://github.com/Clariity/react-chessboard), [chessops](https://github.com/niklasf/chessops), [Socket.IO client](https://socket.io/), [Stockfish.js](https://github.com/nmrugg/stockfish.js), [chess.js](https://github.com/jhlywa/chess.js) (home page engine game), [Google Identity Services](https://developers.google.com/identity/gsi/web)
-- **Server:** Node.js 22 + Express 5, Mongoose, [Socket.IO](https://socket.io/), chessops, [Nodemailer](https://nodemailer.com/) (Gmail SMTP), zod, bcryptjs, JSON Web Tokens
+- **Server:** Node.js 22 + Express 5, Mongoose, [Socket.IO](https://socket.io/), chessops, [Nodemailer](https://nodemailer.com/) + the Gmail API, zod, bcryptjs, JSON Web Tokens
 - **Database:** MongoDB Atlas
 
 ## Project structure
@@ -33,8 +33,8 @@ client/                 React app (deployed to Vercel)
     lib/                API client, socket, Stockfish worker, chess rules
     pages/              one component per route
     shared/             constants shared with the server (kept identical)
-server/                 Express API + Socket.IO (deployed to Koyeb)
-  scripts/              importPuzzles.js, storageReport.js, sendTestEmail.js
+server/                 Express API + Socket.IO (deployed to Render)
+  scripts/              importPuzzles.js, storageReport.js, sendTestEmail.js, gmailAuth.js
   src/
     config/             environment variables
     middleware/         auth, validation, rate limits, errors
@@ -69,14 +69,25 @@ npm run dev             # http://localhost:3000
 
 In development Vite proxies `/api` to `http://localhost:3001`, and the Socket.IO client connects straight to `VITE_API_URL`.
 
-### Email (Gmail app password)
+### Email
 
-Sign-up, password reset and email change send 6-digit codes. Without `SMTP_USER` and `SMTP_PASS` the server prints emails to the console in development; they are required when `NODE_ENV=production`.
+Sign-up, password reset and email change send 6-digit codes from a Gmail account, by one of two routes. Without either, the server prints emails to the console in development; one is required when `NODE_ENV=production`. If both are set, the Gmail API is used.
+
+**Gmail API over HTTPS (use this in production).** Free hosts such as Render block the SMTP ports, but HTTPS always works.
+
+1. In the [Google Cloud console](https://console.cloud.google.com/) (the same project as Google sign-in is fine), open **APIs & Services → Library**, find **Gmail API** and click **Enable**.
+2. Under **Google Auth Platform → Audience**, make sure the app is **In production** (published). Refresh tokens issued while it is in Testing expire after 7 days.
+3. Under **Google Auth Platform → Clients**, create a client of type **Desktop app**. Copy its client ID and secret.
+4. In `server/.env`, set `GMAIL_USER` (the sending address), `GMAIL_CLIENT_ID` and `GMAIL_CLIENT_SECRET`.
+5. Run `cd server && npm run gmail:auth`, open the printed link, sign in with that Gmail account and allow sending. Google warns that the app isn't verified: choose **Advanced → Go to … (unsafe)**; only you see this. The terminal prints `GMAIL_REFRESH_TOKEN=…`; add it to `server/.env`.
+
+**SMTP with an app password (simplest locally).**
 
 1. Turn on 2-Step Verification for the Gmail account.
 2. Open <https://myaccount.google.com/apppasswords>, create an app password and copy the 16 characters (spaces are ignored).
 3. Set `SMTP_USER` to the Gmail address and `SMTP_PASS` to the app password.
-4. Send a test message: `cd server && node --env-file=.env scripts/sendTestEmail.js you@example.com`
+
+Send a test message with either route: `cd server && node --env-file=.env scripts/sendTestEmail.js you@example.com`
 
 ### Google sign-in (optional)
 
@@ -114,24 +125,30 @@ cd client && npm run lessons:check # every lesson position and goal is valid and
 | server | `JWT_SECRET` | yes | Random string of at least 32 bytes for signing session and socket tokens: `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` |
 | server | `CLIENT_ORIGIN` | | Allowed frontend origin(s), comma-separated (default `http://localhost:3000`) |
 | server | `PORT` | | API port (default `3001`) |
-| server | `NODE_ENV` | | `production` in deployment (secure cookies, proxy trust, SMTP required) |
+| server | `NODE_ENV` | | `production` in deployment (secure cookies, proxy trust, email required) |
 | server | `GOOGLE_CLIENT_ID` | | OAuth client ID for Google sign-in |
-| server | `SMTP_USER` | in production | Gmail address that sends email |
-| server | `SMTP_PASS` | in production | Gmail app password |
+| server | `GMAIL_USER` | in production* | Gmail address that sends email (Gmail API route) |
+| server | `GMAIL_CLIENT_ID` | in production* | Desktop app OAuth client ID |
+| server | `GMAIL_CLIENT_SECRET` | in production* | Desktop app OAuth client secret |
+| server | `GMAIL_REFRESH_TOKEN` | in production* | From `npm run gmail:auth` |
+| server | `SMTP_USER` | | Gmail address (SMTP route) |
+| server | `SMTP_PASS` | | Gmail app password (SMTP route) |
+
+\* Production needs the four `GMAIL_*` variables, or `SMTP_USER` and `SMTP_PASS` on a host that allows port 587.
 | client | `VITE_API_URL` | yes | Origin of the API, used by the Socket.IO connection (no trailing slash) |
 | client | `VITE_GOOGLE_CLIENT_ID` | | Same value as `GOOGLE_CLIENT_ID` |
 
 ## Deployment
 
 ```
-Browser ── REST /api/* ── Vercel rewrite ──► Koyeb: Express + Socket.IO ──► MongoDB Atlas
-        └─ Socket.IO (websocket) ─────────► Koyeb
+Browser ── REST /api/* ── Vercel rewrite ──► Render: Express + Socket.IO ──► MongoDB Atlas
+        └─ Socket.IO (websocket) ──────────► Render            └──► Gmail API (HTTPS)
 ```
 
 - **Database:** a MongoDB Atlas Free cluster. Allow connections from the API host (or `0.0.0.0/0`) under Network Access.
-- **API (Koyeb, free instance):** deploy the repository with `server` as the work directory, build command `npm ci`, run command `npm start`, and a health check on `/api/health`. Set the server variables above with `NODE_ENV=production` and `CLIENT_ORIGIN` set to the Vercel URL. Koyeb allows outbound SMTP on port 587, which Gmail needs.
-- **Client (Vercel):** import the repository with `client` as the root directory (Vite preset). Set `VITE_API_URL` to the Koyeb URL and `VITE_GOOGLE_CLIENT_ID`.
-- **`/api` rewrite:** REST calls use the relative `/api` path so the session cookie stays first-party. In `client/vercel.json`, replace `YOUR-KOYEB-APP` in the API rewrite with your Koyeb app's host name. A Vercel build fails with a clear message while the placeholder is still there or `VITE_API_URL` is missing.
+- **API (Render, free web service):** root directory `server`, build command `npm ci`, start command `npm start`, health check path `/api/health`. Set the server variables above with `NODE_ENV=production`, the four `GMAIL_*` variables (Render's free tier blocks SMTP) and `CLIENT_ORIGIN` set to the Vercel URL. Render provides `PORT`. A free service sleeps after 15 minutes without traffic and takes about a minute to wake; the site shows a "Waking up the server" note meanwhile.
+- **Client (Vercel):** import the repository with `client` as the root directory (Vite preset). Set `VITE_API_URL` to the Render URL and `VITE_GOOGLE_CLIENT_ID`.
+- **`/api` rewrite:** REST calls use the relative `/api` path so the session cookie stays first-party. In `client/vercel.json`, replace `YOUR-RENDER-APP` in the API rewrite with your Render service's name. A Vercel build fails with a clear message while the placeholder is still there or `VITE_API_URL` is missing.
 - **Google sign-in:** add the Vercel URL to the OAuth client's Authorised JavaScript origins.
 
 Live games are held in the API's memory, so run a single instance. Active games are saved on shutdown (SIGTERM) and restored on start. The API logs its database size at startup and daily, with a warning above 400 MB.
